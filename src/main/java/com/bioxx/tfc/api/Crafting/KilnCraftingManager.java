@@ -5,59 +5,49 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-public class KilnCraftingManager
-{
-	private static final KilnCraftingManager INSTANCE = new KilnCraftingManager();
-	public static final KilnCraftingManager getInstance()
-	{
-		return INSTANCE;
-	}
+public class KilnCraftingManager {
 
-	private List<KilnRecipe> recipes;
+    private static final KilnCraftingManager INSTANCE = new KilnCraftingManager();
 
-	private KilnCraftingManager()
-	{
-		recipes = new ArrayList<KilnRecipe>();
-	}
+    public static final KilnCraftingManager getInstance() {
+        return INSTANCE;
+    }
 
-	public void addRecipe(KilnRecipe recipe)
-	{
-		recipes.add(recipe);
-	}
+    private List<KilnRecipe> recipes;
 
-	public KilnRecipe findMatchingRecipe(KilnRecipe recipe)
-	{
-		for (int k = 0; k < recipes.size(); k++)
-		{
-			KilnRecipe irecipe = recipes.get(k);
-			if (irecipe.matches(recipe))
-			{
-				return irecipe;
-			}
-		}
+    private KilnCraftingManager() {
+        recipes = new ArrayList<KilnRecipe>();
+    }
 
-		return null;
-	}
+    public void addRecipe(KilnRecipe recipe) {
+        recipes.add(recipe);
+    }
 
-	public ItemStack findCompleteRecipe(KilnRecipe recipe)
-	{
-		for (int k = 0; k < recipes.size(); k++)
-		{
-			KilnRecipe irecipe = recipes.get(k);
-			if (irecipe.isComplete(recipe))
-			{
-				ItemStack out = irecipe.getCraftingResult();
-				if(irecipe.getInheritsTag())
-					out.setTagCompound(recipe.input1.getTagCompound());
-				return out;
-			}
-		}
+    public KilnRecipe findMatchingRecipe(KilnRecipe recipe) {
+        for (int k = 0; k < recipes.size(); k++) {
+            KilnRecipe irecipe = recipes.get(k);
+            if (irecipe.matches(recipe)) {
+                return irecipe;
+            }
+        }
 
-		return recipe.input1;
-	}
+        return null;
+    }
 
-	public List<KilnRecipe> getRecipeList()
-	{
-		return recipes;
-	}
+    public ItemStack findCompleteRecipe(KilnRecipe recipe) {
+        for (int k = 0; k < recipes.size(); k++) {
+            KilnRecipe irecipe = recipes.get(k);
+            if (irecipe.isComplete(recipe)) {
+                ItemStack out = irecipe.getCraftingResult();
+                if (irecipe.getInheritsTag()) out.setTagCompound(recipe.input1.getTagCompound());
+                return out;
+            }
+        }
+
+        return recipe.input1;
+    }
+
+    public List<KilnRecipe> getRecipeList() {
+        return recipes;
+    }
 }

@@ -1,6 +1,6 @@
 package com.bioxx.tfc.Entities;
 
-public interface IAnimalTFC 
-{
-	float getSizeMod();
+public interface IAnimalTFC {
+
+    float getSizeMod();
 }

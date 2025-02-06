@@ -12,112 +12,96 @@ import com.bioxx.tfc.Core.Player.PlayerInventory;
 import com.bioxx.tfc.Items.ItemTuyere;
 import com.bioxx.tfc.TileEntities.TEBlastFurnace;
 
-public class ContainerBlastFurnace extends ContainerTFC
-{
-	private TEBlastFurnace tileentity;
-	private float firetemp;
-	private int orecount;
-	private int coalcount;
+public class ContainerBlastFurnace extends ContainerTFC {
 
-	public ContainerBlastFurnace(InventoryPlayer inventoryplayer, TEBlastFurnace te, World world, int x, int y, int z)
-	{
-		tileentity = te;
-		firetemp = 0;
-		//Input slot
-		//addSlotToContainer(new Slot(tileentityforge, 0, 134, 52));
+    private TEBlastFurnace tileentity;
+    private float firetemp;
+    private int orecount;
+    private int coalcount;
 
-		addSlotToContainer(new SlotTuyere(te, 1, 153, 7));
+    public ContainerBlastFurnace(InventoryPlayer inventoryplayer, TEBlastFurnace te, World world, int x, int y, int z) {
+        tileentity = te;
+        firetemp = 0;
+        // Input slot
+        // addSlotToContainer(new Slot(tileentityforge, 0, 134, 52));
 
-		PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 90, false, true);
+        addSlotToContainer(new SlotTuyere(te, 1, 153, 7));
 
-		tileentity.updateGui();
-	}
+        PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 90, false, true);
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer)
-	{
-		return true;
-	}
+        tileentity.updateGui();
+    }
 
-	@Override
-	public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum)
-	{
-		ItemStack origStack = null;
-		Slot slot = (Slot) inventorySlots.get(slotNum);
-		Slot slotTuyere = (Slot)inventorySlots.get(0);
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return true;
+    }
 
-		if(slot != null && slot.getHasStack())
-		{
-			ItemStack slotStack = slot.getStack();
-			origStack = slotStack.copy();
+    @Override
+    public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum) {
+        ItemStack origStack = null;
+        Slot slot = (Slot) inventorySlots.get(slotNum);
+        Slot slotTuyere = (Slot) inventorySlots.get(0);
 
-			// From tuyere slot to inventory
-			if (slotNum < 1)
-			{
-				if (!this.mergeItemStack(slotStack, 1, this.inventorySlots.size(), true))
-					return null;
-			}
-			else
-			{
-				if (slotStack.getItem() instanceof ItemTuyere)
-				{
-					if(slotTuyere.getHasStack())
-						return null;
-					ItemStack stack = slotStack.copy();
-					stack.stackSize = 1;
-					slotTuyere.putStack(stack);
-					slotStack.stackSize--;
-				}
-			}
+        if (slot != null && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            origStack = slotStack.copy();
 
-			if (slotStack.stackSize <= 0)
-				slot.putStack(null);
-			else
-				slot.onSlotChanged();
+            // From tuyere slot to inventory
+            if (slotNum < 1) {
+                if (!this.mergeItemStack(slotStack, 1, this.inventorySlots.size(), true)) return null;
+            } else {
+                if (slotStack.getItem() instanceof ItemTuyere) {
+                    if (slotTuyere.getHasStack()) return null;
+                    ItemStack stack = slotStack.copy();
+                    stack.stackSize = 1;
+                    slotTuyere.putStack(stack);
+                    slotStack.stackSize--;
+                }
+            }
 
-			if (slotStack.stackSize == origStack.stackSize)
-				return null;
+            if (slotStack.stackSize <= 0) slot.putStack(null);
+            else slot.onSlotChanged();
 
-			slot.onPickupFromSlot(player, slotStack);
-		}
+            if (slotStack.stackSize == origStack.stackSize) return null;
 
-		return origStack;
-	}
+            slot.onPickupFromSlot(player, slotStack);
+        }
 
-	private int updatecounter;
-	@Override
-	public void detectAndSendChanges()
-	{
-		super.detectAndSendChanges();
+        return origStack;
+    }
 
-		for (int var1 = 0; var1 < this.crafters.size(); ++var1)
-		{
-			ICrafting var2 = (ICrafting)this.crafters.get(var1);
-			if (this.firetemp != this.tileentity.fireTemp)
-			{
-				var2.sendProgressBarUpdate(this, 0, (int)this.tileentity.fireTemp);
-			}
-		}
+    private int updatecounter;
 
-		if(orecount != this.tileentity.oreCount || coalcount != this.tileentity.charcoalCount || updatecounter == 1000)
-		{
-			//tileentity.broadcastPacketInRange(tileentity.createUpdatePacket());
-			tileentity.getWorldObj().markBlockForUpdate(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
-			updatecounter = 0;
-		}
-		orecount = this.tileentity.oreCount;
-		coalcount = this.tileentity.charcoalCount;
-		firetemp = this.tileentity.fireTemp;
-		updatecounter += 1;
-	}
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
 
-	@Override
-	public void updateProgressBar(int par1, int par2)
-	{
-		if (par1 == 0)
-		{
-			this.tileentity.fireTemp = par2;
-		}
+        for (int var1 = 0; var1 < this.crafters.size(); ++var1) {
+            ICrafting var2 = (ICrafting) this.crafters.get(var1);
+            if (this.firetemp != this.tileentity.fireTemp) {
+                var2.sendProgressBarUpdate(this, 0, (int) this.tileentity.fireTemp);
+            }
+        }
 
-	}
+        if (orecount != this.tileentity.oreCount || coalcount != this.tileentity.charcoalCount
+            || updatecounter == 1000) {
+            // tileentity.broadcastPacketInRange(tileentity.createUpdatePacket());
+            tileentity.getWorld()
+                .markBlockForUpdate(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
+            updatecounter = 0;
+        }
+        orecount = this.tileentity.oreCount;
+        coalcount = this.tileentity.charcoalCount;
+        firetemp = this.tileentity.fireTemp;
+        updatecounter += 1;
+    }
+
+    @Override
+    public void updateProgressBar(int par1, int par2) {
+        if (par1 == 0) {
+            this.tileentity.fireTemp = par2;
+        }
+
+    }
 }

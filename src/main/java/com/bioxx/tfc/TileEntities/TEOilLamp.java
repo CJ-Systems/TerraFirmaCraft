@@ -1,109 +1,92 @@
 package com.bioxx.tfc.TileEntities;
 
 import net.minecraft.nbt.NBTTagCompound;
-
 import net.minecraftforge.fluids.FluidStack;
 
 import com.bioxx.tfc.Core.TFC_Time;
 import com.bioxx.tfc.api.TFCFluids;
 import com.bioxx.tfc.api.TFCOptions;
 
-public class TEOilLamp extends TELightEmitter
-{
-	private FluidStack fuel;
+public class TEOilLamp extends TELightEmitter {
 
-	public TEOilLamp()
-	{
-	}
+    private FluidStack fuel;
 
-	/*@Override
-	public void create()
-	{
-		super.create();
-	}*/
+    public TEOilLamp() {}
 
-	public FluidStack getFuel()
-	{
-		if(fuel == null)
-			return null;
-		FluidStack f = fuel.copy();
-		f.amount /= TFCOptions.oilLampFuelMult;
-		return f;
-	}
+    /*
+     * @Override
+     * public void create()
+     * {
+     * super.create();
+     * }
+     */
 
-	/**
-	 *  Updates the fuel timer of the lamp. Set burn to false to update the timer without consuming fuel, for when the lamp was off.
-	 * @param burn
-	 */
-	public void updateLampFuel(Boolean burn)
-	{
-		if((int)TFC_Time.getTotalHours() - TFCOptions.oilLampFuelMult >= hourPlaced)
-		{
-			int diff = burn ? (int) TFC_Time.getTotalHours() - this.hourPlaced : 0; // Don't burn any fuel if set to false.
-			this.hourPlaced = (int)TFC_Time.getTotalHours();
+    public FluidStack getFuel() {
+        if (fuel == null) return null;
+        FluidStack f = fuel.copy();
+        f.amount /= TFCOptions.oilLampFuelMult;
+        return f;
+    }
 
-			if(fuel != null && getFuel().getFluid() != TFCFluids.LAVA && this.getFuelAmount() > 0)
-			{
-				fuel.amount -= diff;
-				if(fuel.amount <= 0)
-					fuel = null;
-			}
-		}
-	}
+    /**
+     * Updates the fuel timer of the lamp. Set burn to false to update the timer without consuming fuel, for when the
+     * lamp was off.
+     *
+     * @param burn
+     */
+    public void updateLampFuel(Boolean burn) {
+        if ((int) TFC_Time.getTotalHours() - TFCOptions.oilLampFuelMult >= hourPlaced) {
+            int diff = burn ? (int) TFC_Time.getTotalHours() - this.hourPlaced : 0; // Don't burn any fuel if set to
+                                                                                    // false.
+            this.hourPlaced = (int) TFC_Time.getTotalHours();
 
-	public void setFuelFromStack(FluidStack fs)
-	{
-		fuel = fs;
-		fuel.amount *= TFCOptions.oilLampFuelMult;
-	}
+            if (fuel != null && getFuel().getFluid() != TFCFluids.LAVA && this.getFuelAmount() > 0) {
+                fuel.amount -= diff;
+                if (fuel.amount <= 0) fuel = null;
+            }
+        }
+    }
 
-	public boolean isFuelValid()
-	{
-		int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
-		if(getFuel() != null && getFuel().getFluid() == TFCFluids.OLIVEOIL)
-		{
-			return true;
-		}
-		else if((meta & 7) == 5 && getFuel() != null && getFuel().getFluid() == TFCFluids.LAVA)
-		{
-			return true;
-		}
-		return false;
-	}
+    public void setFuelFromStack(FluidStack fs) {
+        fuel = fs;
+        fuel.amount *= TFCOptions.oilLampFuelMult;
+    }
 
-	@Override
-	public boolean canUpdate()
-	{
-		return false;
-	}
+    public boolean isFuelValid() {
+        int meta = worldObj.getBlockMetadata(xCoord, yCoord, zCoord);
+        if (getFuel() != null && getFuel().getFluid() == TFCFluids.OLIVEOIL) {
+            return true;
+        } else if ((meta & 7) == 5 && getFuel() != null && getFuel().getFluid() == TFCFluids.LAVA) {
+            return true;
+        }
+        return false;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbt)
-	{
-		super.readFromNBT(nbt);
-		if(nbt.hasKey("Fuel"))
-			this.fuel = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fuel"));
-	}
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbt)
-	{
-		super.writeToNBT(nbt);
-		if(fuel != null)
-			nbt.setTag("Fuel", fuel.writeToNBT(new NBTTagCompound()));
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        if (nbt.hasKey("Fuel")) this.fuel = FluidStack.loadFluidStackFromNBT(nbt.getCompoundTag("Fuel"));
+    }
 
-	public int getFuelAmount()
-	{
-		if(fuel == null)
-			return 0;
-		else return fuel.amount;
-	}
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        if (fuel != null) nbt.setTag("Fuel", fuel.writeToNBT(new NBTTagCompound()));
+    }
 
-	public int getFuelTimeLeft()
-	{
-		int f = getFuelAmount();
-		float perc = f/250f;
-		return (int)((TFC_Time.daysInYear*24)*perc);
-	}
+    public int getFuelAmount() {
+        if (fuel == null) return 0;
+        else return fuel.amount;
+    }
+
+    public int getFuelTimeLeft() {
+        int f = getFuelAmount();
+        float perc = f / 250f;
+        return (int) ((TFC_Time.daysInYear * 24) * perc);
+    }
 }

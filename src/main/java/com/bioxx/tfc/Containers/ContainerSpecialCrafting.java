@@ -11,180 +11,164 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import com.bioxx.tfc.Containers.Slots.SlotSpecialCraftingOutput;
-import com.bioxx.tfc.Core.TFC_Achievements;
 import com.bioxx.tfc.Core.Player.PlayerInfo;
 import com.bioxx.tfc.Core.Player.PlayerInventory;
 import com.bioxx.tfc.Core.Player.PlayerManagerTFC;
+import com.bioxx.tfc.Core.TFC_Achievements;
 import com.bioxx.tfc.Items.Tools.ItemMiscToolHead;
+import com.bioxx.tfc.api.Crafting.CraftingManagerTFC;
 import com.bioxx.tfc.api.TFCBlocks;
 import com.bioxx.tfc.api.TFCItems;
-import com.bioxx.tfc.api.Crafting.CraftingManagerTFC;
 
-public class ContainerSpecialCrafting extends ContainerTFC
-{
-	/** The crafting matrix inventory (5x5).
-	 *  Used for knapping and leather working */
-	public InventoryCrafting craftMatrix = new InventoryCrafting(this, 5, 5);
+public class ContainerSpecialCrafting extends ContainerTFC {
 
-	private SlotSpecialCraftingOutput outputSlot;
-	private boolean decreasedStack;
+    /**
+     * The crafting matrix inventory (5x5).
+     * Used for knapping and leather working
+     */
+    public InventoryCrafting craftMatrix = new InventoryCrafting(this, 5, 5);
 
-	/** The crafting result, size 1. */
-	public IInventory craftResult = new InventoryCraftResult();
-	private World worldObj;
-	private InventoryPlayer invPlayer;
-	private boolean isConstructing;
-	public ContainerSpecialCrafting(InventoryPlayer inventoryplayer, ItemStack is, World world, int x, int y, int z)
-	{
-		invPlayer = inventoryplayer;
-		this.worldObj = world; // Must be set before inventorySlotContents to prevent NPE
-		decreasedStack = false;
-		isConstructing = true;
-		bagsSlotNum = inventoryplayer.currentItem;
-		for (int j1 = 0; j1 < 25; j1++)
-		{
-			if(is != null)
-				craftMatrix.setInventorySlotContents(j1, is.copy());
-		}
+    private SlotSpecialCraftingOutput outputSlot;
+    private boolean decreasedStack;
 
-		outputSlot = new SlotSpecialCraftingOutput(this, inventoryplayer.player, craftMatrix, craftResult, 0, 128, 44);
-		addSlotToContainer(outputSlot);
+    /** The crafting result, size 1. */
+    public IInventory craftResult = new InventoryCraftResult();
+    private World worldObj;
+    private InventoryPlayer invPlayer;
+    private boolean isConstructing;
 
-		PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 108, true, true);
+    public ContainerSpecialCrafting(InventoryPlayer inventoryplayer, ItemStack is, World world, int x, int y, int z) {
+        invPlayer = inventoryplayer;
+        this.worldObj = world; // Must be set before inventorySlotContents to prevent NPE
+        decreasedStack = false;
+        isConstructing = true;
+        bagsSlotNum = inventoryplayer.currentItem;
+        for (int j1 = 0; j1 < 25; j1++) {
+            if (is != null) craftMatrix.setInventorySlotContents(j1, is.copy());
+        }
 
-		this.onCraftMatrixChanged(this.craftMatrix);
-		isConstructing = false;
-	}
+        outputSlot = new SlotSpecialCraftingOutput(this, inventoryplayer.player, craftMatrix, craftResult, 0, 128, 44);
+        addSlotToContainer(outputSlot);
 
-	@Override
-	public void onContainerClosed(EntityPlayer player)
-	{
-		super.onContainerClosed(player);
-		if (!this.worldObj.isRemote)
-		{
-			ItemStack is = this.craftResult.getStackInSlotOnClosing(0);
-			if (is != null)
-				player.entityDropItem(is, 0);
-		}
-	}
+        PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 108, true, true);
 
-	/**
-	 * Callback for when the crafting matrix is changed.
-	 */
-	@Override
-	public void onCraftMatrixChanged(IInventory ii)
-	{
-		ItemStack result = CraftingManagerTFC.getInstance().findMatchingRecipe(this.craftMatrix, worldObj);
+        this.onCraftMatrixChanged(this.craftMatrix);
+        isConstructing = false;
+    }
 
-		// Handle decreasing the stack of the held item used to open the interface.
-		if (!decreasedStack && !isConstructing)
-		{
-			PlayerInfo pi = PlayerManagerTFC.getInstance().getPlayerInfoFromPlayer(invPlayer.player);
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        if (!this.worldObj.isRemote) {
+            ItemStack is = this.craftResult.getStackInSlotOnClosing(0);
+            if (is != null) player.entityDropItem(is, 0);
+        }
+    }
 
-			// A valid clay recipe has been formed.
-			if (pi.specialCraftingType.getItem() == TFCItems.flatClay)
-			{
-				if (result != null)
-				{
-					setDecreasedStack(true); // Mark container so it won't decrease again.
-					if (!this.worldObj.isRemote && invPlayer.getCurrentItem().stackSize >= 5) // Server only to prevent it removing multiple times.
-						invPlayer.decrStackSize(invPlayer.currentItem, 5);
-					else // Clientside or if the player doesn't have enough clay, return before the output slot is set.
-					{
-						setDecreasedStack(false);
-						return;
-					}
-				}
-			}
-			// A piece of rock or leather has been removed.
-			else if (hasPieceBeenRemoved(pi))
-			{
-				setDecreasedStack(true); // Mark container so it won't decrease again.
-				if (!this.worldObj.isRemote) // Server only to prevent it removing multiple times.
-					invPlayer.consumeInventoryItem(invPlayer.getCurrentItem().getItem());
-			}
-		}
+    /**
+     * Callback for when the crafting matrix is changed.
+     */
+    @Override
+    public void onCraftMatrixChanged(IInventory ii) {
+        ItemStack result = CraftingManagerTFC.getInstance()
+            .findMatchingRecipe(this.craftMatrix, worldObj);
 
-		// The crafting output is only set if the input was consumed
-		if (decreasedStack)
-		{
-			this.craftResult.setInventorySlotContents(0, result);
+        // Handle decreasing the stack of the held item used to open the interface.
+        if (!decreasedStack && !isConstructing) {
+            PlayerInfo pi = PlayerManagerTFC.getInstance()
+                .getPlayerInfoFromPlayer(invPlayer.player);
 
-			// Trigger Achievements
-			if (result != null && invPlayer.player != null)
-			{
-				Item item = result.getItem();
-				if (item instanceof ItemMiscToolHead &&((ItemMiscToolHead) (item)).getMaterial() != null &&
-					(((ItemMiscToolHead) (item)).getMaterial() == TFCItems.igInToolMaterial ||
-						((ItemMiscToolHead) (item)).getMaterial() == TFCItems.sedToolMaterial ||
-						((ItemMiscToolHead) (item)).getMaterial() == TFCItems.igExToolMaterial ||
-						((ItemMiscToolHead) (item)).getMaterial() == TFCItems.mMToolMaterial))
-				{
-					invPlayer.player.triggerAchievement(TFC_Achievements.achStoneAge);
-					if (item == TFCItems.stoneKnifeHead && result.stackSize == 2)
-						invPlayer.player.triggerAchievement(TFC_Achievements.achTwoKnives);
-				}
-				else if (item == Item.getItemFromBlock(TFCBlocks.crucible))
-					invPlayer.player.triggerAchievement(TFC_Achievements.achCrucible);
-			}
-		}
-	}
+            // A valid clay recipe has been formed.
+            if (pi.specialCraftingType.getItem() == TFCItems.flatClay) {
+                if (result != null) {
+                    setDecreasedStack(true); // Mark container so it won't decrease again.
+                    if (!this.worldObj.isRemote && invPlayer.getCurrentItem().stackSize >= 5) // Server only to prevent
+                                                                                              // it removing multiple
+                                                                                              // times.
+                        invPlayer.decrStackSize(invPlayer.currentItem, 5);
+                    else // Clientside or if the player doesn't have enough clay, return before the output slot is set.
+                    {
+                        setDecreasedStack(false);
+                        return;
+                    }
+                }
+            }
+            // A piece of rock or leather has been removed.
+            else if (hasPieceBeenRemoved(pi)) {
+                setDecreasedStack(true); // Mark container so it won't decrease again.
+                if (!this.worldObj.isRemote) // Server only to prevent it removing multiple times.
+                    invPlayer.consumeInventoryItem(
+                        invPlayer.getCurrentItem()
+                            .getItem());
+            }
+        }
 
-	/**
-	 * Called to transfer a stack from one inventory to the other eg. when shift clicking.
-	 * @return 
-	 */
-	@Override
-	public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum)
-	{
-		ItemStack origStack = null;
-		Slot slot = (Slot)this.inventorySlots.get(slotNum);
+        // The crafting output is only set if the input was consumed
+        if (decreasedStack) {
+            this.craftResult.setInventorySlotContents(0, result);
 
-		if (slot != null && slot instanceof SlotSpecialCraftingOutput && slot.getHasStack())
-		{
-			ItemStack slotStack = slot.getStack();
-			origStack = slotStack.copy();
+            // Trigger Achievements
+            if (result != null && invPlayer.player != null) {
+                Item item = result.getItem();
+                if (item instanceof ItemMiscToolHead && ((ItemMiscToolHead) (item)).getMaterial() != null
+                    && (((ItemMiscToolHead) (item)).getMaterial() == TFCItems.igInToolMaterial
+                        || ((ItemMiscToolHead) (item)).getMaterial() == TFCItems.sedToolMaterial
+                        || ((ItemMiscToolHead) (item)).getMaterial() == TFCItems.igExToolMaterial
+                        || ((ItemMiscToolHead) (item)).getMaterial() == TFCItems.mMToolMaterial)) {
+                    invPlayer.player.triggerAchievement(TFC_Achievements.achStoneAge);
+                    if (item == TFCItems.stoneKnifeHead && result.stackSize == 2)
+                        invPlayer.player.triggerAchievement(TFC_Achievements.achTwoKnives);
+                } else if (item == Item.getItemFromBlock(TFCBlocks.crucible))
+                    invPlayer.player.triggerAchievement(TFC_Achievements.achCrucible);
+            }
+        }
+    }
 
-			if (slotNum < 1 && !this.mergeItemStack(slotStack, 1, inventorySlots.size(), true))
-				return null;
+    /**
+     * Called to transfer a stack from one inventory to the other eg. when shift clicking.
+     *
+     * @return
+     */
+    @Override
+    public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum) {
+        ItemStack origStack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotNum);
 
-			if (slotStack.stackSize <= 0)
-				slot.putStack(null);
-			else
-				slot.onSlotChanged();
+        if (slot != null && slot instanceof SlotSpecialCraftingOutput && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            origStack = slotStack.copy();
 
-			if (slotStack.stackSize == origStack.stackSize)
-				return null;
+            if (slotNum < 1 && !this.mergeItemStack(slotStack, 1, inventorySlots.size(), true)) return null;
 
-			slot.onPickupFromSlot(player, slotStack);
-		}
+            if (slotStack.stackSize <= 0) slot.putStack(null);
+            else slot.onSlotChanged();
 
-		return origStack;
-	}
+            if (slotStack.stackSize == origStack.stackSize) return null;
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player)
-	{
-		return true;
-	}
+            slot.onPickupFromSlot(player, slotStack);
+        }
 
-	public boolean hasPieceBeenRemoved(PlayerInfo pi)
-	{
-		// Knapping interface is a boolean array where the value is true if that button has been pushed.
-		for (int i = 0; i < this.craftMatrix.getSizeInventory(); i++)
-		{
-			if (this.craftMatrix.getStackInSlot(i) == null)
-				return true;
-		}
+        return origStack;
+    }
 
-		// Reset the decreasedStack flag if no pieces have been removed.
-		setDecreasedStack(false);
-		return false;
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return true;
+    }
 
-	public void setDecreasedStack(Boolean b)
-	{
-		this.decreasedStack = b;
-	}
+    public boolean hasPieceBeenRemoved(PlayerInfo pi) {
+        // Knapping interface is a boolean array where the value is true if that button has been pushed.
+        for (int i = 0; i < this.craftMatrix.getSizeInventory(); i++) {
+            if (this.craftMatrix.getStackInSlot(i) == null) return true;
+        }
+
+        // Reset the decreasedStack flag if no pieces have been removed.
+        setDecreasedStack(false);
+        return false;
+    }
+
+    public void setDecreasedStack(Boolean b) {
+        this.decreasedStack = b;
+    }
 
 }

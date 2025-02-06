@@ -4,17 +4,15 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 
 import com.bioxx.tfc.Reference;
 
-public class BlockIgExBrick extends BlockIgExSmooth
-{
-	public BlockIgExBrick()
-	{
-		super();
-	}
+public class BlockIgExBrick extends BlockIgExSmooth {
 
-	@Override
-	public void registerBlockIcons(IIconRegister iconRegisterer)
-	{
-		for(int i = 0; i < names.length; i++)
-			icons[i] = iconRegisterer.registerIcon(Reference.MOD_ID + ":" + "rocks/"+names[i]+" Brick");
-	}
+    public BlockIgExBrick() {
+        super();
+    }
+
+    @Override
+    public void registerIcons(IIconRegister iconRegisterer) {
+        for (int i = 0; i < names.length; i++)
+            icons[i] = iconRegisterer.registerIcon(Reference.MOD_ID + ":" + "rocks/" + names[i] + " Brick");
+    }
 }

@@ -7,24 +7,21 @@ import com.bioxx.tfc.api.Enums.EnumSize;
 import com.bioxx.tfc.api.Enums.EnumWeight;
 import com.bioxx.tfc.api.Interfaces.IQuiverAmmo;
 
-public class ItemArrow extends ItemTerra implements IQuiverAmmo
-{
-	public ItemArrow()
-	{
-		super();
-		this.setSize(EnumSize.LARGE);
-		this.setWeight(EnumWeight.LIGHT);
-	}
+public class ItemArrow extends ItemTerra implements IQuiverAmmo {
 
-	@Override
-	public void registerIcons(IIconRegister registerer)
-	{
-		this.itemIcon = registerer.registerIcon("minecraft:arrow");
-	}
+    public ItemArrow() {
+        super();
+        this.setSize(EnumSize.LARGE);
+        this.setWeight(EnumWeight.LIGHT);
+    }
 
-	@Override
-	public EnumAmmo getAmmoType() 
-	{
-		return EnumAmmo.ARROW;
-	}
+    @Override
+    public void registerIcons(IIconRegister registerer) {
+        this.itemIcon = registerer.registerIcon("minecraft:arrow");
+    }
+
+    @Override
+    public EnumAmmo getAmmoType() {
+        return EnumAmmo.ARROW;
+    }
 }

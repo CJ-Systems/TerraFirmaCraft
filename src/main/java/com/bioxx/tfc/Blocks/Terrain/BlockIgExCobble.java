@@ -6,20 +6,18 @@ import net.minecraft.world.World;
 
 import com.bioxx.tfc.api.Constant.Global;
 
-public class BlockIgExCobble extends BlockCobble
-{
-	public BlockIgExCobble(Material material)
-	{
-		super(material);
-		names = Global.STONE_IGEX;
-		icons = new IIcon[names.length];
-		looseStart = Global.STONE_IGEX_START;
-	}
+public class BlockIgExCobble extends BlockCobble {
 
-	@Override
-	public int tickRate(World world)
-	{
-//		return 3;
-		return 20;
-	}
+    public BlockIgExCobble(Material material) {
+        super(material);
+        names = Global.STONE_IGEX;
+        icons = new IIcon[names.length];
+        looseStart = Global.STONE_IGEX_START;
+    }
+
+    @Override
+    public int tickRate(World world) {
+        // return 3;
+        return 20;
+    }
 }

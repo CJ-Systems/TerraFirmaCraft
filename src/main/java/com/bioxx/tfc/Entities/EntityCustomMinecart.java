@@ -8,49 +8,43 @@ import net.minecraft.world.World;
 
 import com.bioxx.tfc.api.TFCBlocks;
 
-public class EntityCustomMinecart extends EntityMinecartChest
-{
-	public EntityCustomMinecart(World par1World)
-	{
-		super(par1World);
-	}
+public class EntityCustomMinecart extends EntityMinecartChest {
 
-	public EntityCustomMinecart(World par1, double par2, double par4, double par6)
-	{
-		super(par1, par2, par4, par6);
-	}
+    public EntityCustomMinecart(World par1World) {
+        super(par1World);
+    }
 
-	@Override
-	public void killMinecart(DamageSource par1DamageSource)
-	{
-		super.killMinecart(par1DamageSource);
-		this.func_145778_a(Item.getItemFromBlock(TFCBlocks.chest), 1, 0.0F);
-	}
+    public EntityCustomMinecart(World par1, double par2, double par4, double par6) {
+        super(par1, par2, par4, par6);
+    }
 
-	/**
-	 * Returns the number of slots in the inventory.
-	 */
-	@Override
-	public int getSizeInventory()
-	{
-		return 18;
-	}
+    @Override
+    public void killMinecart(DamageSource par1DamageSource) {
+        super.killMinecart(par1DamageSource);
+        this.dropItemWithOffset(Item.getItemFromBlock(TFCBlocks.chest), 1, 0.0F);
+    }
 
-	@Override
-	public int getMinecartType()
-	{
-		return 1;
-	}
+    /**
+     * Returns the number of slots in the inventory.
+     */
+    @Override
+    public int getSizeInventory() {
+        return 18;
+    }
 
-	@Override
-	public Block func_145817_o()/*getDefaultDisplayTile*/
-	{
-		return TFCBlocks.chest;
-	}
+    @Override
+    public int getMinecartType() {
+        return 1;
+    }
 
-	@Override
-	public int getDefaultDisplayTileOffset()
-	{
-		return 8;
-	}
+    @Override
+    public Block getDefaultDisplayTile()/* getDefaultDisplayTile */
+    {
+        return TFCBlocks.chest;
+    }
+
+    @Override
+    public int getDefaultDisplayTileOffset() {
+        return 8;
+    }
 }

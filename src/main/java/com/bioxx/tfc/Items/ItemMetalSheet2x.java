@@ -8,21 +8,20 @@ import com.bioxx.tfc.Core.TFCTabs;
 import com.bioxx.tfc.api.Enums.EnumSize;
 import com.bioxx.tfc.api.Enums.EnumWeight;
 
-public class ItemMetalSheet2x extends ItemMetalSheet
-{
-	public ItemMetalSheet2x(int mID)
-	{
-		super(mID);
-		setMaxDamage(0);
-		this.setCreativeTab(TFCTabs.TFC_MATERIALS);
-		this.setWeight(EnumWeight.HEAVY);
-		this.setSize(EnumSize.MEDIUM);
-		metalAmount = 400;
-	}
+public class ItemMetalSheet2x extends ItemMetalSheet {
 
-	@Override
-	public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ)
-	{
-		return false;
-	}
+    public ItemMetalSheet2x(int mID) {
+        super(mID);
+        setMaxDurability(0);
+        this.setCreativeTab(TFCTabs.TFC_MATERIALS);
+        this.setWeight(EnumWeight.HEAVY);
+        this.setSize(EnumSize.MEDIUM);
+        metalAmount = 400;
+    }
+
+    @Override
+    public boolean onItemUse(ItemStack itemstack, EntityPlayer entityplayer, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ) {
+        return false;
+    }
 }

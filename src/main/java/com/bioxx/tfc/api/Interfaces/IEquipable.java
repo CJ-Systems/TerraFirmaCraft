@@ -2,16 +2,16 @@ package com.bioxx.tfc.api.Interfaces;
 
 import net.minecraft.item.ItemStack;
 
-public interface IEquipable 
-{
-	EquipType getEquipType(ItemStack is);
+public interface IEquipable {
 
-	static enum EquipType
-	{
-		BACK, NULL;
-	}
+    EquipType getEquipType(ItemStack is);
 
-	void onEquippedRender();
+    static enum EquipType {
+        BACK,
+        NULL;
+    }
 
-	boolean getTooHeavyToCarry(ItemStack is);
+    void onEquippedRender();
+
+    boolean getTooHeavyToCarry(ItemStack is);
 }

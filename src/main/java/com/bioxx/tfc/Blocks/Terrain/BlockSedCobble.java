@@ -6,19 +6,18 @@ import net.minecraft.world.World;
 
 import com.bioxx.tfc.api.Constant.Global;
 
-public class BlockSedCobble extends BlockCobble
-{
-	public BlockSedCobble(Material material) {
-		super(material);
-		names = Global.STONE_SED;
-		icons = new IIcon[names.length];
-		looseStart = Global.STONE_SED_START;
-	}
+public class BlockSedCobble extends BlockCobble {
 
-	@Override
-	public int tickRate(World world)
-	{
-//		return 3;
-		return 20;
-	}
+    public BlockSedCobble(Material material) {
+        super(material);
+        names = Global.STONE_SED;
+        icons = new IIcon[names.length];
+        looseStart = Global.STONE_SED_START;
+    }
+
+    @Override
+    public int tickRate(World world) {
+        // return 3;
+        return 20;
+    }
 }

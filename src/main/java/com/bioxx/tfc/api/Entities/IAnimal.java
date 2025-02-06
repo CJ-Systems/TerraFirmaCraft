@@ -7,135 +7,149 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Vec3;
 
-public interface IAnimal
-{
-	public enum GenderEnum
-	{
-		MALE,FEMALE;
-		public static final GenderEnum[] GENDERS = {MALE, FEMALE};
-	}
-	
-	public enum InteractionEnum
-	{
-		MOUNT,SHEAR,MILK,BREED, NAME, TOLERATEPLAYER;
-		public static final InteractionEnum[] INTERACTIONS = {MOUNT,SHEAR,MILK,BREED, NAME, TOLERATEPLAYER};
-	}
+public interface IAnimal {
 
-	boolean canFamiliarize();
+    public enum GenderEnum {
 
-	boolean canMateWith(IAnimal animal);
+        MALE,
+        FEMALE;
 
-	boolean checkFamiliarity(InteractionEnum interaction, EntityPlayer player);
+        public static final GenderEnum[] GENDERS = { MALE, FEMALE };
+    }
 
-	EntityAgeable createChildTFC(EntityAgeable entityageable);
+    public enum InteractionEnum {
 
-	/**
-	 * Represents interaction with the animal that makes the animal happy, thus increasing it's familiarization
-	 * @param ep
-	 */
-	void familiarize(EntityPlayer ep);
+        MOUNT,
+        SHEAR,
+        MILK,
+        BREED,
+        NAME,
+        TOLERATEPLAYER;
 
-	int getAge();
+        public static final InteractionEnum[] INTERACTIONS = { MOUNT, SHEAR, MILK, BREED, NAME, TOLERATEPLAYER };
+    }
 
-	/**
-	 * @return Aggression modifier of the animal. Used for rendering and various other purposes.
-	 * Aggression affects how likely an animal is to attack another player or animal and the ferocity of which it does so.
-	 */
-	float getAggressionMod();
+    boolean canFamiliarize();
 
-	int getAnimalTypeID();
+    boolean canMateWith(IAnimal animal);
 
-	Vec3 getAttackedVec();
+    boolean checkFamiliarity(InteractionEnum interaction, EntityPlayer player);
 
-	int getBirthDay();
+    EntityAgeable createChildTFC(EntityAgeable entityageable);
 
-	int getDueDay();
+    /**
+     * Represents interaction with the animal that makes the animal happy, thus increasing it's familiarization
+     * 
+     * @param ep
+     */
+    void familiarize(EntityPlayer ep);
 
-	EntityLiving getEntity();
-	
-	/**
-	 * Represents how familiar the animal is with players. This is used for most human interaction.
-	 * @return	familiarity
-	 */
-	int getFamiliarity();
+    int getAge();
 
-	boolean getFamiliarizedToday();
+    /**
+     * @return Aggression modifier of the animal. Used for rendering and various other purposes.
+     *         Aggression affects how likely an animal is to attack another player or animal and the ferocity of which
+     *         it does so.
+     */
+    float getAggressionMod();
 
-	Entity getFearSource();
+    int getAnimalTypeID();
 
-	GenderEnum getGender();
+    Vec3 getAttackedVec();
 
-	int getHunger();
+    int getBirthDay();
 
-	//	It would be nice to call this isInLove() except that would shadow
-	//	EntityAnimal.isInLove() causing MCP to obfuscate this method, which
-	//	we don't want because the callers won't be obfuscated.
-	//	
-	boolean getInLove();
-	/**
-	 * @return The length of time (in days) until this type of animal reatures maturity
-	 */
-	int getNumberOfDaysToAdult();
+    int getDueDay();
 
-	/**
-	 * @return Obedience modifier of the animal. Used for rendering and various other purposes.
-	 * Obedience affects how well the animal responds to player commands and how willingly it does so.
-	 * Obedience and Aggression collectively determine whether an animal is domesticated.
-	 */
-	float getObedienceMod();
+    EntityLiving getEntity();
 
-	//public int getSex();
-	/**
-	 * @return Size modifier of the animal. Used for rendering and various other purposes.
-	 * Size is primarilly affected by the area the animal lives in; forests generally have smaller animals, as do colder climates.
-	 */
-	float getSizeMod();
+    /**
+     * Represents how familiar the animal is with players. This is used for most human interaction.
+     * 
+     * @return familiarity
+     */
+    int getFamiliarity();
 
-	/**
-	 * @return Strength modifier of the animal. Used for rendering and various other purposes.
-	 * Absolute strength is affected by size, but inherant musculature also plays a roll.
-	 */
-	float getStrengthMod();
+    boolean getFamiliarizedToday();
 
-	/**
-	 * Used to calculate whether an animal should become more familiar or less familiar with players
-	 */
-	void handleFamiliarityUpdate();
+    Entity getFearSource();
 
-	boolean isAdult();
+    GenderEnum getGender();
 
-	/**
-	 * separate from isBreedingItem, this just determines if an animal would eat from an itemstack.
-	 * @param item the item
-	 * @return see desc.
-	 */
-	boolean isFood(ItemStack item);
+    int getHunger();
 
-	boolean isPregnant();
+    // It would be nice to call this isInLove() except that would shadow
+    // EntityAnimal.isInLove() causing MCP to obfuscate this method, which
+    // we don't want because the callers won't be obfuscated.
+    //
+    boolean getInLove();
 
-	void mate(IAnimal animal);
+    /**
+     * @return The length of time (in days) until this type of animal reatures maturity
+     */
+    int getNumberOfDaysToAdult();
 
-	void setAge(int age);
+    /**
+     * @return Obedience modifier of the animal. Used for rendering and various other purposes.
+     *         Obedience affects how well the animal responds to player commands and how willingly it does so.
+     *         Obedience and Aggression collectively determine whether an animal is domesticated.
+     */
+    float getObedienceMod();
 
-	void setAggressionMod(float aggression);
+    // public int getSex();
+    /**
+     * @return Size modifier of the animal. Used for rendering and various other purposes.
+     *         Size is primarilly affected by the area the animal lives in; forests generally have smaller animals, as
+     *         do colder climates.
+     */
+    float getSizeMod();
 
-	void setAttackedVec(Vec3 attackedVec);
+    /**
+     * @return Strength modifier of the animal. Used for rendering and various other purposes.
+     *         Absolute strength is affected by size, but inherant musculature also plays a roll.
+     */
+    float getStrengthMod();
 
-	void setBirthDay(int day);
-	
-	void setFamiliarity(int f);
-	
-	void setFearSource(Entity fearSource);
+    /**
+     * Used to calculate whether an animal should become more familiar or less familiar with players
+     */
+    void handleFamiliarityUpdate();
 
-	void setHunger(int h);
+    boolean isAdult();
 
-	void setInLove(boolean b);
-	
-	void setObedienceMod(float obedience);
-	
-	void setSizeMod(float size);
+    /**
+     * separate from isBreedingItem, this just determines if an animal would eat from an itemstack.
+     * 
+     * @param item the item
+     * @return see desc.
+     */
+    boolean isFood(ItemStack item);
 
-	void setStrengthMod(float strength);
+    boolean isPregnant();
 
-	boolean trySetName(String name, EntityPlayer player);
+    void mate(IAnimal animal);
+
+    void setAge(int age);
+
+    void setAggressionMod(float aggression);
+
+    void setAttackedVec(Vec3 attackedVec);
+
+    void setBirthDay(int day);
+
+    void setFamiliarity(int f);
+
+    void setFearSource(Entity fearSource);
+
+    void setHunger(int h);
+
+    void setInLove(boolean b);
+
+    void setObedienceMod(float obedience);
+
+    void setSizeMod(float size);
+
+    void setStrengthMod(float strength);
+
+    boolean trySetName(String name, EntityPlayer player);
 }

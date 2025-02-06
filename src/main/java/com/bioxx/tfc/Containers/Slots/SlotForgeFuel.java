@@ -7,22 +7,19 @@ import net.minecraft.item.ItemStack;
 
 import com.bioxx.tfc.api.TFCItems;
 
-public class SlotForgeFuel extends Slot
-{
-	public SlotForgeFuel(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k)
-	{
-		super(iinventory, i, j, k);
-	}
+public class SlotForgeFuel extends Slot {
 
-	@Override
-	public boolean isItemValid(ItemStack itemstack)
-	{
-		return itemstack.getItem() == TFCItems.coal;
-	}
+    public SlotForgeFuel(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k) {
+        super(iinventory, i, j, k);
+    }
 
-	@Override
-	public int getSlotStackLimit()
-	{
-		return 1;
-	}
+    @Override
+    public boolean isItemValid(ItemStack itemstack) {
+        return itemstack.getItem() == TFCItems.coal;
+    }
+
+    @Override
+    public int getSlotStackLimit() {
+        return 1;
+    }
 }

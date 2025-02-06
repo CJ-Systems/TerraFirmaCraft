@@ -9,58 +9,55 @@ import net.minecraft.world.World;
 
 import com.bioxx.tfc.Reference;
 
-public class ItemFlatGeneric extends ItemTerra
-{
-	public IIcon[] icons;
-	public ItemFlatGeneric() 
-	{
-		super();
-		this.hasSubtypes = false;
-		this.setMaxDamage(0);
-		this.maxStackSize = 25;
-		this.setCreativeTab(null);
-	}
+public class ItemFlatGeneric extends ItemTerra {
 
-	public ItemFlatGeneric(int id, String tex) 
-	{
-		super();
-	}
+    public IIcon[] icons;
 
-	@Override
-	public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) 
-	{
-		//if(par1ItemStack.stackSize == 0)
-			((EntityPlayer)par3Entity).inventory.setInventorySlotContents(par4, null);
-	}
+    public ItemFlatGeneric() {
+        super();
+        this.hasSubtypes = false;
+        this.setMaxDurability(0);
+        this.maxStackSize = 25;
+        this.setCreativeTab(null);
+    }
 
-	@Override
-	public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player)
-	{
-		return false;
-	}
+    public ItemFlatGeneric(int id, String tex) {
+        super();
+    }
 
-	@Override
-	public void registerIcons(IIconRegister registerer)
-	{
-		if(this.metaNames == null) {
-			this.itemIcon = registerer.registerIcon(Reference.MOD_ID + ":" + textureFolder + this.getUnlocalizedName().replace("item.", ""));
-		} else
-		{
-			icons = new IIcon[this.metaNames.length];
-			for(int i = 0; i < this.metaNames.length; i++)
-			{
-				this.icons[i] = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + metaNames[i]);
-			}
-		}
-	}
+    @Override
+    public void onUpdate(ItemStack par1ItemStack, World par2World, Entity par3Entity, int par4, boolean par5) {
+        // if(par1ItemStack.stackSize == 0)
+        ((EntityPlayer) par3Entity).inventory.setInventorySlotContents(par4, null);
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int damage)
-	{
-		if(this.metaNames == null) {
-			return this.itemIcon;
-		} else {
-			return icons[damage];
-		}
-	}
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, EntityPlayer player) {
+        return false;
+    }
+
+    @Override
+    public void registerIcons(IIconRegister registerer) {
+        if (this.metaNames == null) {
+            this.itemIcon = registerer.registerIcon(
+                Reference.MOD_ID + ":"
+                    + textureFolder
+                    + this.getUnlocalizedName()
+                        .replace("item.", ""));
+        } else {
+            icons = new IIcon[this.metaNames.length];
+            for (int i = 0; i < this.metaNames.length; i++) {
+                this.icons[i] = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + metaNames[i]);
+            }
+        }
+    }
+
+    @Override
+    public IIcon getIconFromDamage(int damage) {
+        if (this.metaNames == null) {
+            return this.itemIcon;
+        } else {
+            return icons[damage];
+        }
+    }
 }

@@ -12,282 +12,251 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 
-import com.bioxx.tfc.Reference;
 import com.bioxx.tfc.Core.TFCTabs;
 import com.bioxx.tfc.Core.TFC_Core;
+import com.bioxx.tfc.Reference;
 import com.bioxx.tfc.TileEntities.TEAnvil;
-import com.bioxx.tfc.api.HeatIndex;
-import com.bioxx.tfc.api.HeatRegistry;
-import com.bioxx.tfc.api.TFCItems;
-import com.bioxx.tfc.api.TFC_ItemHeat;
 import com.bioxx.tfc.api.Enums.EnumItemReach;
 import com.bioxx.tfc.api.Enums.EnumSize;
 import com.bioxx.tfc.api.Enums.EnumWeight;
+import com.bioxx.tfc.api.HeatIndex;
+import com.bioxx.tfc.api.HeatRegistry;
 import com.bioxx.tfc.api.Interfaces.IEquipable;
 import com.bioxx.tfc.api.Interfaces.ISize;
+import com.bioxx.tfc.api.TFCItems;
+import com.bioxx.tfc.api.TFC_ItemHeat;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-public class ItemTerra extends Item implements ISize
-{
-	protected boolean stackable = true;
-	protected EnumSize size = EnumSize.TINY;
-	protected EnumWeight weight = EnumWeight.LIGHT;
+public class ItemTerra extends Item implements ISize {
 
-	public String[] metaNames;
-	public IIcon[] metaIcons;
-	public String textureFolder;
+    protected boolean stackable = true;
+    protected EnumSize size = EnumSize.TINY;
+    protected EnumWeight weight = EnumWeight.LIGHT;
 
-	private int craftingXP = 1;
+    public String[] metaNames;
+    public IIcon[] metaIcons;
+    public String textureFolder;
 
-	public ItemTerra()
-	{
-		super();
-		this.setCreativeTab(TFCTabs.TFC_MISC);
-		textureFolder = "";
-		setNoRepair();
-	}
+    private int craftingXP = 1;
 
-	public ItemTerra setMetaNames(String[] metanames)
-	{
-		metaNames = metanames.clone();
-		this.hasSubtypes = true;
-		return this;
-	}
+    public ItemTerra() {
+        super();
+        this.setCreativeTab(TFCTabs.TFC_MISC);
+        textureFolder = "";
+        setNoRepair();
+    }
 
-	public ItemTerra setCraftingXP(int m)
-	{
-		craftingXP = m;
-		return this;
-	}
+    public ItemTerra setMetaNames(String[] metanames) {
+        metaNames = metanames.clone();
+        this.hasSubtypes = true;
+        return this;
+    }
 
-	public int getCraftingXP()
-	{
-		return this.craftingXP;
-	}
+    public ItemTerra setCraftingXP(int m) {
+        craftingXP = m;
+        return this;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void getSubItems(Item item, CreativeTabs tabs, List list)
-	{
-		if(metaNames != null)
-		{
-			for(int i = 0; i < metaNames.length; i++)
-			{
-				list.add(new ItemStack(this, 1, i));
-			}
-		}
-		else
-		{
-			list.add(new ItemStack(this, 1));
-		}
-	}
+    public int getCraftingXP() {
+        return this.craftingXP;
+    }
 
-	@Override
-	public int getItemStackLimit(ItemStack is)
-	{
-		if(canStack())
-			return this.getSize(null).stackSize * getWeight(null).multiplier <= 64 ? this.getSize(null).stackSize * getWeight(null).multiplier : 64;
-			else
-				return 1;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void getSubItems(Item item, CreativeTabs tabs, List list) {
+        if (metaNames != null) {
+            for (int i = 0; i < metaNames.length; i++) {
+                list.add(new ItemStack(this, 1, i));
+            }
+        } else {
+            list.add(new ItemStack(this, 1));
+        }
+    }
 
-	public ItemTerra setFolder(String s)
-	{
-		this.textureFolder = s;
-		return this;
-	}
+    @Override
+    public int getItemStackLimit(ItemStack is) {
+        if (canStack()) return this.getSize(null).stackSize * getWeight(null).multiplier <= 64
+            ? this.getSize(null).stackSize * getWeight(null).multiplier
+            : 64;
+        else return 1;
+    }
 
-	@Override
-	public void registerIcons(IIconRegister registerer)
-	{
-		if(this.metaNames == null)
-		{
-			if(this.iconString != null)
-				this.itemIcon = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + this.getIconString());
-			else
-				this.itemIcon = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + this.getUnlocalizedName().replace("item.", ""));
-		}
-		else
-		{
-			metaIcons = new IIcon[metaNames.length];
-			for(int i = 0; i < metaNames.length; i++)
-			{
-				metaIcons[i] = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + metaNames[i]);
-			}
-			
-			//This will prevent NullPointerException errors with other mods like NEI
-			this.itemIcon = metaIcons[0];
-		}
-	}
+    public ItemTerra setFolder(String s) {
+        this.textureFolder = s;
+        return this;
+    }
 
-	@Override
-	public IIcon getIconFromDamage(int i)
-	{
-		if(metaNames != null && i < metaNames.length)
-			return metaIcons[i];
-		else
-			return this.itemIcon;
-	}
+    @Override
+    public void registerIcons(IIconRegister registerer) {
+        if (this.metaNames == null) {
+            if (this.iconString != null) this.itemIcon = registerer
+                .registerIcon(Reference.MOD_ID + ":" + this.textureFolder + this.getIconString());
+            else this.itemIcon = registerer.registerIcon(
+                Reference.MOD_ID + ":"
+                    + this.textureFolder
+                    + this.getUnlocalizedName()
+                        .replace("item.", ""));
+        } else {
+            metaIcons = new IIcon[metaNames.length];
+            for (int i = 0; i < metaNames.length; i++) {
+                metaIcons[i] = registerer.registerIcon(Reference.MOD_ID + ":" + this.textureFolder + metaNames[i]);
+            }
 
-	@Override
-	public String getUnlocalizedName(ItemStack itemstack)
-	{
-		if(metaNames != null && itemstack.getItemDamage() < metaNames.length)
-			return getUnlocalizedName().concat("." + metaNames[itemstack.getItemDamage()]);
-		return super.getUnlocalizedName(itemstack);
-	}
+            // This will prevent NullPointerException errors with other mods like NEI
+            this.itemIcon = metaIcons[0];
+        }
+    }
 
-	@Override
-	public boolean getShareTag()
-	{
-		return true;
-	}
+    @Override
+    public IIcon getIconFromDamage(int i) {
+        if (metaNames != null && i < metaNames.length) return metaIcons[i];
+        else return this.itemIcon;
+    }
 
-	/**
-	 * This is called by inventories in the world to tick things such as temperature and food decay. Override this and 
-	 * return true if you want the item to be handled differently than the standard code. True will stop he standard TFC code from running.
-	 */
-	public boolean onUpdate(ItemStack is, World world, int x, int y, int z)
-	{
-		return false;
-	}
+    @Override
+    public String getUnlocalizedName(ItemStack itemstack) {
+        if (metaNames != null && itemstack.getMetadata() < metaNames.length)
+            return getUnlocalizedName().concat("." + metaNames[itemstack.getMetadata()]);
+        return super.getUnlocalizedName(itemstack);
+    }
 
-	public static void addSizeInformation(ItemStack object, List<String> arraylist)
-	{
-		if(((ISize)object.getItem()).getSize(object)!= null && ((ISize)object.getItem()).getWeight(object) != null && ((ISize)object.getItem()).getReach(object)!= null)
-			arraylist.add("\u2696" + TFC_Core.translate("gui.Weight." + ((ISize)object.getItem()).getWeight(object).getName()) + " \u21F2" + 
-					TFC_Core.translate("gui.Size." + ((ISize)object.getItem()).getSize(object).getName().replace(" ", "")));
-		if(object.getItem() instanceof IEquipable)
-		{
-			if(((IEquipable)object.getItem()).getEquipType(object) == IEquipable.EquipType.BACK)
-			{
-				arraylist.add(EnumChatFormatting.LIGHT_PURPLE.toString()+TFC_Core.translate("gui.slot")+ 
-						EnumChatFormatting.GRAY.toString()+": " + 
-						EnumChatFormatting.WHITE.toString() + TFC_Core.translate("gui.slot.back"));
-			}
-		}
-	}
+    @Override
+    public boolean getShareTag() {
+        return true;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void addInformation(ItemStack is, EntityPlayer player, List arraylist, boolean flag)
-	{
-		//Minecraft.getMinecraft().gameSettings.advancedItemTooltips = false;
-		ItemTerra.addSizeInformation(is, arraylist);
+    /**
+     * This is called by inventories in the world to tick things such as temperature and food decay. Override this and
+     * return true if you want the item to be handled differently than the standard code. True will stop he standard TFC
+     * code from running.
+     */
+    public boolean onUpdate(ItemStack is, World world, int x, int y, int z) {
+        return false;
+    }
 
-		ItemTerra.addHeatInformation(is, arraylist);
+    public static void addSizeInformation(ItemStack object, List<String> arraylist) {
+        if (((ISize) object.getItem()).getSize(object) != null && ((ISize) object.getItem()).getWeight(object) != null
+            && ((ISize) object.getItem()).getReach(object) != null)
+            arraylist.add(
+                "\u2696" + TFC_Core.translate(
+                    "gui.Weight." + ((ISize) object.getItem()).getWeight(object)
+                        .getName())
+                    + " \u21F2"
+                    + TFC_Core.translate(
+                        "gui.Size." + ((ISize) object.getItem()).getSize(object)
+                            .getName()
+                            .replace(" ", "")));
+        if (object.getItem() instanceof IEquipable) {
+            if (((IEquipable) object.getItem()).getEquipType(object) == IEquipable.EquipType.BACK) {
+                arraylist.add(
+                    EnumChatFormatting.LIGHT_PURPLE.toString() + TFC_Core.translate("gui.slot")
+                        + EnumChatFormatting.GRAY.toString()
+                        + ": "
+                        + EnumChatFormatting.WHITE.toString()
+                        + TFC_Core.translate("gui.slot.back"));
+            }
+        }
+    }
 
-		if (is.hasTagCompound())
-		{
-			NBTTagCompound tag = is.getTagCompound();
-			// Use either tag as a failsafe to display the tooltip
-			if (tag.hasKey(TEAnvil.ITEM_CRAFTING_VALUE_TAG) || tag.hasKey(TEAnvil.ITEM_CRAFTING_RULE_1_TAG))
-				arraylist.add(TFC_Core.translate("gui.ItemWorked"));
-		}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void addInformation(ItemStack is, EntityPlayer player, List arraylist, boolean flag) {
+        // Minecraft.getMinecraft().gameSettings.advancedItemTooltips = false;
+        ItemTerra.addSizeInformation(is, arraylist);
 
-		addItemInformation(is, player, arraylist);
-		addExtraInformation(is, player, arraylist);
-	}
+        ItemTerra.addHeatInformation(is, arraylist);
 
-	public void addItemInformation(ItemStack is, EntityPlayer player, List<String> arraylist)
-	{
-		if(	is.getItem() instanceof ItemIngot ||
-				is.getItem() instanceof ItemMetalSheet ||
-				is.getItem() instanceof ItemUnfinishedArmor ||
-				is.getItem() instanceof ItemBloom ||
-				is.getItem() == TFCItems.wroughtIronKnifeHead)
-		{
-			if(TFC_ItemHeat.hasTemp(is))
-			{
-				String s = "";
-				if(HeatRegistry.getInstance().isTemperatureDanger(is))
-				{
-					s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.danger") + " | ";
-				}
+        if (is.hasTagCompound()) {
+            NBTTagCompound tag = is.getTagCompound();
+            // Use either tag as a failsafe to display the tooltip
+            if (tag.hasKey(TEAnvil.ITEM_CRAFTING_VALUE_TAG) || tag.hasKey(TEAnvil.ITEM_CRAFTING_RULE_1_TAG))
+                arraylist.add(TFC_Core.translate("gui.ItemWorked"));
+        }
 
-				if(HeatRegistry.getInstance().isTemperatureWeldable(is))
-				{
-					s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.weldable") + " | ";
-				}
+        addItemInformation(is, player, arraylist);
+        addExtraInformation(is, player, arraylist);
+    }
 
-				if(HeatRegistry.getInstance().isTemperatureWorkable(is))
-				{
-					s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.workable");
-				}
+    public void addItemInformation(ItemStack is, EntityPlayer player, List<String> arraylist) {
+        if (is.getItem() instanceof ItemIngot || is.getItem() instanceof ItemMetalSheet
+            || is.getItem() instanceof ItemUnfinishedArmor
+            || is.getItem() instanceof ItemBloom
+            || is.getItem() == TFCItems.wroughtIronKnifeHead) {
+            if (TFC_ItemHeat.hasTemp(is)) {
+                String s = "";
+                if (HeatRegistry.getInstance()
+                    .isTemperatureDanger(is)) {
+                    s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.danger") + " | ";
+                }
 
-				if (!"".equals(s))
-					arraylist.add(s);
-			}
-		}
-	}
+                if (HeatRegistry.getInstance()
+                    .isTemperatureWeldable(is)) {
+                    s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.weldable") + " | ";
+                }
 
-	public static void addHeatInformation(ItemStack is, List<String> arraylist)
-	{
-		if (is.hasTagCompound())
-		{
-			if(TFC_ItemHeat.hasTemp(is))
-			{
-				float temp = TFC_ItemHeat.getTemp(is);
-				float meltTemp = -1;
-				HeatIndex hi = HeatRegistry.getInstance().findMatchingIndex(is);
-				if(hi != null)
-					meltTemp = hi.meltTemp;
+                if (HeatRegistry.getInstance()
+                    .isTemperatureWorkable(is)) {
+                    s += EnumChatFormatting.WHITE + TFC_Core.translate("gui.ingot.workable");
+                }
 
-				if(meltTemp != -1)
-				{
-					if(is.getItem() == TFCItems.stick)
-						arraylist.add(TFC_ItemHeat.getHeatColorTorch(temp, meltTemp));
-					else
-						arraylist.add(TFC_ItemHeat.getHeatColor(temp, meltTemp));
-				}
-			}
-		}
-	}
+                if (!"".equals(s)) arraylist.add(s);
+            }
+        }
+    }
 
-	public void addExtraInformation(ItemStack is, EntityPlayer player, List<String> arraylist)
-	{
-	}
+    public static void addHeatInformation(ItemStack is, List<String> arraylist) {
+        if (is.hasTagCompound()) {
+            if (TFC_ItemHeat.hasTemp(is)) {
+                float temp = TFC_ItemHeat.getTemp(is);
+                float meltTemp = -1;
+                HeatIndex hi = HeatRegistry.getInstance()
+                    .findMatchingIndex(is);
+                if (hi != null) meltTemp = hi.meltTemp;
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public Multimap getItemAttributeModifiers()
-	{
-		return HashMultimap.create();
-	}
+                if (meltTemp != -1) {
+                    if (is.getItem() == TFCItems.stick) arraylist.add(TFC_ItemHeat.getHeatColorTorch(temp, meltTemp));
+                    else arraylist.add(TFC_ItemHeat.getHeatColor(temp, meltTemp));
+                }
+            }
+        }
+    }
 
-	@Override
-	public boolean canStack()
-	{
-		return stackable;
-	}
+    public void addExtraInformation(ItemStack is, EntityPlayer player, List<String> arraylist) {}
 
-	@Override
-	public EnumSize getSize(ItemStack is)
-	{
-		return size;
-	}
-	@Override
-	public EnumWeight getWeight(ItemStack is)
-	{
-		return weight;
-	}
+    @SuppressWarnings("rawtypes")
+    @Override
+    public Multimap getItemAttributeModifiers() {
+        return HashMultimap.create();
+    }
 
-	public ItemTerra setSize(EnumSize e)
-	{
-		size = e;
-		return this;
-	}
+    @Override
+    public boolean canStack() {
+        return stackable;
+    }
 
-	public ItemTerra setWeight(EnumWeight e)
-	{
-		weight = e;
-		return this;
-	}
+    @Override
+    public EnumSize getSize(ItemStack is) {
+        return size;
+    }
 
-	@Override
-	public EnumItemReach getReach(ItemStack is)
-	{
-		return EnumItemReach.SHORT;
-	}
+    @Override
+    public EnumWeight getWeight(ItemStack is) {
+        return weight;
+    }
+
+    public ItemTerra setSize(EnumSize e) {
+        size = e;
+        return this;
+    }
+
+    public ItemTerra setWeight(EnumWeight e) {
+        weight = e;
+        return this;
+    }
+
+    @Override
+    public EnumItemReach getReach(ItemStack is) {
+        return EnumItemReach.SHORT;
+    }
 }

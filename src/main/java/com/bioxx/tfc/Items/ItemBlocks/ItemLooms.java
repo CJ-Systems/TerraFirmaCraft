@@ -17,81 +17,72 @@ import com.bioxx.tfc.api.Constant.Global;
 import com.bioxx.tfc.api.Enums.EnumSize;
 import com.bioxx.tfc.api.Enums.EnumWeight;
 
-public class ItemLooms extends ItemTerraBlock
-{
-	public ItemLooms(Block par1)
-	{
-		super(par1);
-		setMaxDamage(0);
-		setHasSubtypes(true);
-		this.setCreativeTab(TFCTabs.TFC_DEVICES);
-		this.metaNames = Global.WOOD_ALL;
-	}
+public class ItemLooms extends ItemTerraBlock {
 
-	@Override
-	public EnumSize getSize(ItemStack is)
-	{
-		return EnumSize.LARGE;
-	}
+    public ItemLooms(Block par1) {
+        super(par1);
+        setMaxDurability(0);
+        setHasSubtypes(true);
+        this.setCreativeTab(TFCTabs.TFC_DEVICES);
+        this.metaNames = Global.WOOD_ALL;
+    }
 
-	@Override
-	public EnumWeight getWeight(ItemStack is)
-	{
-		return EnumWeight.HEAVY;
-	}
+    @Override
+    public EnumSize getSize(ItemStack is) {
+        return EnumSize.LARGE;
+    }
 
-	@SuppressWarnings("rawtypes")
-	@Override
-	public void addInformation(ItemStack is, EntityPlayer player, List arraylist, boolean flag)
-	{
-		ItemTerra.addSizeInformation(is, arraylist);
-	}
+    @Override
+    public EnumWeight getWeight(ItemStack is) {
+        return EnumWeight.HEAVY;
+    }
 
-	@Override
-	public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
-	{
+    @SuppressWarnings("rawtypes")
+    @Override
+    public void addInformation(ItemStack is, EntityPlayer player, List arraylist, boolean flag) {
+        ItemTerra.addSizeInformation(is, arraylist);
+    }
 
-		if (!world.setBlock(x, y, z, field_150939_a, metadata&15, 3))
-		{
-			return false;
-		}
+    @Override
+    public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side,
+        float hitX, float hitY, float hitZ, int metadata) {
 
-		if (world.getBlock(x, y, z) == field_150939_a)
-		{
-			field_150939_a.onBlockPlacedBy(world, x, y, z, player, stack);
-			field_150939_a.onPostBlockPlaced(world, x, y, z, 0);
+        if (!world.setBlock(x, y, z, blockInstance, metadata & 15, 3)) {
+            return false;
+        }
 
-			if (world.getTileEntity(x, y, z) instanceof TELoom)
-			{
-				TELoom te = (TELoom) world.getTileEntity(x, y, z);
-				if (te != null)
-				{
-					te.loomType = metadata;
-					world.markBlockForUpdate(x, y, z);
+        if (world.getBlock(x, y, z) == blockInstance) {
+            blockInstance.onBlockPlacedBy(world, x, y, z, player, stack);
+            blockInstance.onPostBlockPlaced(world, x, y, z, 0);
 
-					int l = MathHelper.floor_double(player.rotationYaw * 4F / 360F + 0.5D) & 3;
-					byte byte0 = 0;
-					if (l == 0)//+z
-						byte0 = 0;
-					if (l == 1)//-x
-						byte0 = 1;
-					if (l == 2)//-z
-						byte0 = 2;
-					if (l == 3)//+x
-						byte0 = 3;
-					te.rotation = byte0;
-				}
-			}
-		}
-		return true;
-	}
+            if (world.getTileEntity(x, y, z) instanceof TELoom) {
+                TELoom te = (TELoom) world.getTileEntity(x, y, z);
+                if (te != null) {
+                    te.loomType = metadata;
+                    world.markBlockForUpdate(x, y, z);
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List list)
-	{
-		for(int i = 0; i < metaNames.length; i++) {
-			list.add(new ItemStack(this,1,i));
-		}
-	}
+                    int l = MathHelper.floor_double(player.rotationYaw * 4F / 360F + 0.5D) & 3;
+                    byte byte0 = 0;
+                    if (l == 0)// +z
+                        byte0 = 0;
+                    if (l == 1)// -x
+                        byte0 = 1;
+                    if (l == 2)// -z
+                        byte0 = 2;
+                    if (l == 3)// +x
+                        byte0 = 3;
+                    te.rotation = byte0;
+                }
+            }
+        }
+        return true;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    @Override
+    public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List list) {
+        for (int i = 0; i < metaNames.length; i++) {
+            list.add(new ItemStack(this, 1, i));
+        }
+    }
 }

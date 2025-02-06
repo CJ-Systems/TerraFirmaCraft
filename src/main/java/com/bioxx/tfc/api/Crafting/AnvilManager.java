@@ -9,163 +9,137 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class AnvilManager
-{
-	private static final AnvilManager INSTANCE = new AnvilManager();
-	public static final AnvilManager getInstance()
-	{
-		return INSTANCE;
-	}
-	public static World world;
+public class AnvilManager {
 
-	private List<AnvilRecipe> recipes;
-	private List<AnvilRecipe> recipesWeld;
-	private Map<String, PlanRecipe> plans;
+    private static final AnvilManager INSTANCE = new AnvilManager();
 
-	private AnvilManager()
-	{
-		recipes = new ArrayList<AnvilRecipe>();
-		recipesWeld = new ArrayList<AnvilRecipe>();
-		plans = new HashMap<String, PlanRecipe>();
-	}
+    public static final AnvilManager getInstance() {
+        return INSTANCE;
+    }
 
-	public void addRecipe(AnvilRecipe recipe)
-	{
-		recipes.add(recipe);
-	}
+    public static World world;
 
-	public void addWeldRecipe(AnvilRecipe recipe)
-	{
-		recipe.flux = true;
-		recipesWeld.add(recipe);
-	}
+    private List<AnvilRecipe> recipes;
+    private List<AnvilRecipe> recipesWeld;
+    private Map<String, PlanRecipe> plans;
 
-	public void clearRecipes()
-	{
-		recipes.clear();
-		recipesWeld.clear();
-		plans.clear();
-	}
+    private AnvilManager() {
+        recipes = new ArrayList<AnvilRecipe>();
+        recipesWeld = new ArrayList<AnvilRecipe>();
+        plans = new HashMap<String, PlanRecipe>();
+    }
 
-	/**
-	 * Adds a name for a plan type to the plans list. If it already exists then it will not be added. All types are not case sensative as it
-	 * autoconverts to lowercase when adding to prevent bugs due to case.
-	 */
-	public void addPlan(String s, PlanRecipe r)
-	{
-		s = s.toLowerCase();
-		if(!plans.containsKey(s))
-			plans.put(s, r);
-	}
+    public void addRecipe(AnvilRecipe recipe) {
+        recipes.add(recipe);
+    }
 
-	public PlanRecipe getPlan(String s)
-	{
-		return plans.get(s);
-	}
+    public void addWeldRecipe(AnvilRecipe recipe) {
+        recipe.flux = true;
+        recipesWeld.add(recipe);
+    }
 
-	public AnvilRecipe findMatchingRecipe(AnvilRecipe recipe)
-	{
-		for (int k = 0; k < recipes.size(); k++)
-		{
-			AnvilRecipe irecipe = recipes.get(k);
-			if (irecipe != null && irecipe.matches(recipe))
-				return irecipe;
-		}
+    public void clearRecipes() {
+        recipes.clear();
+        recipesWeld.clear();
+        plans.clear();
+    }
 
-		return null;
-	}
+    /**
+     * Adds a name for a plan type to the plans list. If it already exists then it will not be added. All types are not
+     * case sensative as it
+     * autoconverts to lowercase when adding to prevent bugs due to case.
+     */
+    public void addPlan(String s, PlanRecipe r) {
+        s = s.toLowerCase();
+        if (!plans.containsKey(s)) plans.put(s, r);
+    }
 
-	public AnvilRecipe findMatchingWeldRecipe(AnvilRecipe recipe)
-	{
-		for (int k = 0; k < recipesWeld.size(); k++)
-		{
-			AnvilRecipe irecipe = recipesWeld.get(k);
-			if (irecipe != null && irecipe.matches(recipe))
-				return irecipe;
-		}
+    public PlanRecipe getPlan(String s) {
+        return plans.get(s);
+    }
 
-		return null;
-	}
+    public AnvilRecipe findMatchingRecipe(AnvilRecipe recipe) {
+        for (int k = 0; k < recipes.size(); k++) {
+            AnvilRecipe irecipe = recipes.get(k);
+            if (irecipe != null && irecipe.matches(recipe)) return irecipe;
+        }
 
-	public Object[] findCompleteRecipe(AnvilRecipe recipe, int[] rules)
-	{
-		for (int k = 0; k < recipes.size(); k++)
-		{
-			AnvilRecipe irecipe = recipes.get(k);
-			if (irecipe != null && irecipe.isComplete(INSTANCE, recipe, rules))
-				return new Object[] {irecipe, irecipe.getCraftingResult(recipe.input1)};
-		}
+        return null;
+    }
 
-		return null;
-	}
+    public AnvilRecipe findMatchingWeldRecipe(AnvilRecipe recipe) {
+        for (int k = 0; k < recipesWeld.size(); k++) {
+            AnvilRecipe irecipe = recipesWeld.get(k);
+            if (irecipe != null && irecipe.matches(recipe)) return irecipe;
+        }
 
-	public ItemStack findCompleteWeldRecipe(AnvilRecipe recipe)
-	{
-		for (int k = 0; k < recipesWeld.size(); k++)
-		{
-			AnvilRecipe irecipe = recipesWeld.get(k);
-			if (irecipe != null && irecipe.matches(recipe))
-				return irecipe.getCraftingResult(recipe.input1);
-		}
+        return null;
+    }
 
-		return null;
-	}
+    public Object[] findCompleteRecipe(AnvilRecipe recipe, int[] rules) {
+        for (int k = 0; k < recipes.size(); k++) {
+            AnvilRecipe irecipe = recipes.get(k);
+            if (irecipe != null && irecipe.isComplete(INSTANCE, recipe, rules))
+                return new Object[] { irecipe, irecipe.getCraftingResult(recipe.input1) };
+        }
 
-	public List<AnvilRecipe> getRecipeList()
-	{
-		return recipes;
-	}
+        return null;
+    }
 
-	public List<AnvilRecipe> getWeldRecipeList()
-	{
-		return recipesWeld;
-	}
+    public ItemStack findCompleteWeldRecipe(AnvilRecipe recipe) {
+        for (int k = 0; k < recipesWeld.size(); k++) {
+            AnvilRecipe irecipe = recipesWeld.get(k);
+            if (irecipe != null && irecipe.matches(recipe)) return irecipe.getCraftingResult(recipe.input1);
+        }
 
-	public Map<String, PlanRecipe> getPlans()
-	{
-		return plans;
-	}
+        return null;
+    }
 
-	public static NBTTagCompound getCraftTag(ItemStack is)
-	{
-		if(is.hasTagCompound() && is.getTagCompound().hasKey("craftingTag"))
-		{
-			return (NBTTagCompound) is.getTagCompound().getTag("craftingTag");
-		}
-		else
-			return new NBTTagCompound();
-	}
+    public List<AnvilRecipe> getRecipeList() {
+        return recipes;
+    }
 
-	public static void setCraftTag(ItemStack is, NBTTagCompound nbt)
-	{
-		if(!is.hasTagCompound())
-			is.setTagCompound(new NBTTagCompound());
-		is.getTagCompound().setTag("craftingTag", nbt);
-	}
+    public List<AnvilRecipe> getWeldRecipeList() {
+        return recipesWeld;
+    }
 
-	public static float getDurabilityBuff(ItemStack is)
-	{
-		NBTTagCompound nbt = getCraftTag(is);
-		return nbt.getFloat("durabuff");
-	}
+    public Map<String, PlanRecipe> getPlans() {
+        return plans;
+    }
 
-	public static void setDurabilityBuff(ItemStack is, float value)
-	{
-		NBTTagCompound nbt = getCraftTag(is);
-		nbt.setFloat("durabuff", value);
-		setCraftTag(is, nbt);
-	}
+    public static NBTTagCompound getCraftTag(ItemStack is) {
+        if (is.hasTagCompound() && is.getTagCompound()
+            .hasKey("craftingTag")) {
+            return (NBTTagCompound) is.getTagCompound()
+                .getTag("craftingTag");
+        } else return new NBTTagCompound();
+    }
 
-	public static float getDamageBuff(ItemStack is)
-	{
-		NBTTagCompound nbt = getCraftTag(is);
-		return nbt.getFloat("damagebuff");
-	}
+    public static void setCraftTag(ItemStack is, NBTTagCompound nbt) {
+        if (!is.hasTagCompound()) is.setTagCompound(new NBTTagCompound());
+        is.getTagCompound()
+            .setTag("craftingTag", nbt);
+    }
 
-	public static void setDamageBuff(ItemStack is, float value)
-	{
-		NBTTagCompound nbt = getCraftTag(is);
-		nbt.setFloat("damagebuff", value);
-		setCraftTag(is, nbt);
-	}
+    public static float getDurabilityBuff(ItemStack is) {
+        NBTTagCompound nbt = getCraftTag(is);
+        return nbt.getFloat("durabuff");
+    }
+
+    public static void setDurabilityBuff(ItemStack is, float value) {
+        NBTTagCompound nbt = getCraftTag(is);
+        nbt.setFloat("durabuff", value);
+        setCraftTag(is, nbt);
+    }
+
+    public static float getDamageBuff(ItemStack is) {
+        NBTTagCompound nbt = getCraftTag(is);
+        return nbt.getFloat("damagebuff");
+    }
+
+    public static void setDamageBuff(ItemStack is, float value) {
+        NBTTagCompound nbt = getCraftTag(is);
+        nbt.setFloat("damagebuff", value);
+        setCraftTag(is, nbt);
+    }
 }

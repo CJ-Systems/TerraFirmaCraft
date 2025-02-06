@@ -6,16 +6,14 @@ import net.minecraft.item.ItemStack;
 
 import com.bioxx.tfc.api.TFCItems;
 
-public class SlotAnvilFlux extends Slot
-{
-	public SlotAnvilFlux(IInventory iinventory, int i, int j, int k)
-	{
-		super(iinventory, i, j, k);
-	}
+public class SlotAnvilFlux extends Slot {
 
-	@Override
-	public boolean isItemValid(ItemStack itemstack)
-	{
-		return itemstack.getItem() == TFCItems.powder && itemstack.getItemDamage() == 0;
-	}
+    public SlotAnvilFlux(IInventory iinventory, int i, int j, int k) {
+        super(iinventory, i, j, k);
+    }
+
+    @Override
+    public boolean isItemValid(ItemStack itemstack) {
+        return itemstack.getItem() == TFCItems.powder && itemstack.getMetadata() == 0;
+    }
 }

@@ -8,73 +8,59 @@ import net.minecraft.item.ItemStack;
 
 import com.bioxx.tfc.Core.Player.PlayerInventory;
 
-public class ContainerHopper extends ContainerTFC
-{
-	private final IInventory hopperInv;
+public class ContainerHopper extends ContainerTFC {
 
-	public ContainerHopper(InventoryPlayer playerInv, IInventory inv)
-	{
-		this.hopperInv = inv;
-		inv.openInventory();
-		int i;
+    private final IInventory hopperInv;
 
-		for (i = 0; i < inv.getSizeInventory(); ++i)
-		{
-			this.addSlotToContainer(new Slot(inv, i, 44 + i * 18, 17));
-		}
+    public ContainerHopper(InventoryPlayer playerInv, IInventory inv) {
+        this.hopperInv = inv;
+        inv.openChest();
+        int i;
 
-		PlayerInventory.buildInventoryLayout(this, playerInv, 8, 54, false, true);
-	}
+        for (i = 0; i < inv.getSizeInventory(); ++i) {
+            this.addSlotToContainer(new Slot(inv, i, 44 + i * 18, 17));
+        }
 
-	@Override
-	public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum)
-	{
-		ItemStack origStack = null;
-		Slot slot = (Slot)inventorySlots.get(slotNum);
+        PlayerInventory.buildInventoryLayout(this, playerInv, 8, 54, false, true);
+    }
 
-		if(slot != null && slot.getHasStack())
-		{
-			ItemStack slotStack = slot.getStack();
-			origStack = slotStack.copy();
+    @Override
+    public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum) {
+        ItemStack origStack = null;
+        Slot slot = (Slot) inventorySlots.get(slotNum);
 
-			if(slotNum < 5)
-			{
-				if(!this.mergeItemStack(slotStack, 5, this.inventorySlots.size(), true))
-					return null;
-			}
-			else
-			{
-				if (!this.mergeItemStack(slotStack, 0, 5, false))
-					return null;
-			}
+        if (slot != null && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            origStack = slotStack.copy();
 
-			if (slotStack.stackSize <= 0)
-				slot.putStack(null);
-			else
-				slot.onSlotChanged();
+            if (slotNum < 5) {
+                if (!this.mergeItemStack(slotStack, 5, this.inventorySlots.size(), true)) return null;
+            } else {
+                if (!this.mergeItemStack(slotStack, 0, 5, false)) return null;
+            }
 
-			if (slotStack.stackSize == origStack.stackSize)
-				return null;
+            if (slotStack.stackSize <= 0) slot.putStack(null);
+            else slot.onSlotChanged();
 
-			slot.onPickupFromSlot(player, slotStack);
-		}
+            if (slotStack.stackSize == origStack.stackSize) return null;
 
-		return origStack;
-	}
+            slot.onPickupFromSlot(player, slotStack);
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer player)
-	{
-		return this.hopperInv.isUseableByPlayer(player);
-	}
+        return origStack;
+    }
 
-	/**
-	 * Called when the container is closed.
-	 */
-	@Override
-	public void onContainerClosed(EntityPlayer player)
-	{
-		super.onContainerClosed(player);
-		this.hopperInv.closeInventory();
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer player) {
+        return this.hopperInv.isUseableByPlayer(player);
+    }
+
+    /**
+     * Called when the container is closed.
+     */
+    @Override
+    public void onContainerClosed(EntityPlayer player) {
+        super.onContainerClosed(player);
+        this.hopperInv.closeChest();
+    }
 }

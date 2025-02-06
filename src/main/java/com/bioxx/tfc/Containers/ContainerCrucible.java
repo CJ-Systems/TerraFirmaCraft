@@ -13,99 +13,83 @@ import com.bioxx.tfc.Items.ItemMeltedMetal;
 import com.bioxx.tfc.TileEntities.TECrucible;
 import com.bioxx.tfc.api.TFCItems;
 
-public class ContainerCrucible extends ContainerTFC
-{
-	private TECrucible te;
-	private float firetemp;
+public class ContainerCrucible extends ContainerTFC {
 
-	public ContainerCrucible(InventoryPlayer inventoryplayer, TECrucible tileentityforge, World world, int x, int y, int z)
-	{
-		te = tileentityforge;
-		firetemp = 0;
-		//Input slot
-		addSlotToContainer(new Slot(tileentityforge, 0, 152, 7)
-		{
-			@Override
-			public boolean isItemValid(ItemStack itemstack)
-			{
-				return !(itemstack.getItem() == TFCItems.rawBloom || itemstack.getItem() == TFCItems.bloom && itemstack.getItemDamage() > 100);
-			}
-		});
+    private TECrucible te;
+    private float firetemp;
 
-		addSlotToContainer(new SlotLiquidVessel(tileentityforge, 1, 152, 90));
+    public ContainerCrucible(InventoryPlayer inventoryplayer, TECrucible tileentityforge, World world, int x, int y,
+        int z) {
+        te = tileentityforge;
+        firetemp = 0;
+        // Input slot
+        addSlotToContainer(new Slot(tileentityforge, 0, 152, 7) {
 
-		PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 118, false, true);
+            @Override
+            public boolean isItemValid(ItemStack itemstack) {
+                return !(itemstack.getItem() == TFCItems.rawBloom
+                    || itemstack.getItem() == TFCItems.bloom && itemstack.getMetadata() > 100);
+            }
+        });
 
-		te.updateGui((byte) 0);
-	}
+        addSlotToContainer(new SlotLiquidVessel(tileentityforge, 1, 152, 90));
 
-	@Override
-	public boolean canInteractWith(EntityPlayer entityplayer)
-	{
-		return true;
-	}
+        PlayerInventory.buildInventoryLayout(this, inventoryplayer, 8, 118, false, true);
 
-	@Override
-	public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum)
-	{
-		ItemStack origStack = null;
-		Slot slot = (Slot)this.inventorySlots.get(slotNum);
+        te.updateGui((byte) 0);
+    }
 
-		if (slot != null && slot.getHasStack())
-		{
-			ItemStack slotStack = slot.getStack();
-			origStack = slotStack.copy();
+    @Override
+    public boolean canInteractWith(EntityPlayer entityplayer) {
+        return true;
+    }
 
-			// From crucible to inventory
-			if (slotNum < 2)
-			{
-				if (!this.mergeItemStack(slotStack, 2, inventorySlots.size(), true))
-					return null;
-			}
-			// Ceramic molds into output slot
-			else if (slotStack.getItem() == TFCItems.ceramicMold && slotStack.getItemDamage() == 1 || slotStack.getItem() instanceof ItemMeltedMetal)
-			{
-				if (!this.mergeItemStack(slotStack, 1, 2, true))
-					return null;
-			}
-			// To input slot
-			else
-			{
-				if (!this.mergeItemStack(slotStack, 0, 1, true))
-					return null;
-			}
+    @Override
+    public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum) {
+        ItemStack origStack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotNum);
 
-			if (slotStack.stackSize <= 0)
-				slot.putStack(null);
-			else
-				slot.onSlotChanged();
+        if (slot != null && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            origStack = slotStack.copy();
 
-			if (slotStack.stackSize == origStack.stackSize)
-				return null;
+            // From crucible to inventory
+            if (slotNum < 2) {
+                if (!this.mergeItemStack(slotStack, 2, inventorySlots.size(), true)) return null;
+            }
+            // Ceramic molds into output slot
+            else if (slotStack.getItem() == TFCItems.ceramicMold && slotStack.getMetadata() == 1
+                || slotStack.getItem() instanceof ItemMeltedMetal) {
+                    if (!this.mergeItemStack(slotStack, 1, 2, true)) return null;
+                }
+            // To input slot
+            else {
+                if (!this.mergeItemStack(slotStack, 0, 1, true)) return null;
+            }
 
-			slot.onPickupFromSlot(player, slotStack);
-		}
+            if (slotStack.stackSize <= 0) slot.putStack(null);
+            else slot.onSlotChanged();
 
-		return origStack;
-	}
+            if (slotStack.stackSize == origStack.stackSize) return null;
 
-	@Override
-	public void detectAndSendChanges()
-	{
-		super.detectAndSendChanges();
+            slot.onPickupFromSlot(player, slotStack);
+        }
 
-		for (int var1 = 0; var1 < this.crafters.size(); ++var1)
-		{
-			ICrafting var2 = (ICrafting)this.crafters.get(var1);
-			if (this.firetemp != this.te.temperature)
-				var2.sendProgressBarUpdate(this, 0, this.te.temperature);
-		}
-	}
+        return origStack;
+    }
 
-	@Override
-	public void updateProgressBar(int id, int value)
-	{
-		if (id == 0)
-			this.te.temperature = value;
-	}
+    @Override
+    public void detectAndSendChanges() {
+        super.detectAndSendChanges();
+
+        for (int var1 = 0; var1 < this.crafters.size(); ++var1) {
+            ICrafting var2 = (ICrafting) this.crafters.get(var1);
+            if (this.firetemp != this.te.temperature) var2.sendProgressBarUpdate(this, 0, this.te.temperature);
+        }
+    }
+
+    @Override
+    public void updateProgressBar(int id, int value) {
+        if (id == 0) this.te.temperature = value;
+    }
 }

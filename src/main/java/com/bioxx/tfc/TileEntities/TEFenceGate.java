@@ -2,77 +2,70 @@ package com.bioxx.tfc.TileEntities;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-public class TEFenceGate extends NetworkTileEntity
-{
-	private boolean open;
-	private byte direction;
+public class TEFenceGate extends NetworkTileEntity {
 
-	@Override
-	public boolean canUpdate()
-	{
-		return false;
-	}
-	
-	public void setOpen(boolean value)
-	{
-		open = value;
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
+    private boolean open;
+    private byte direction;
 
-	public void setDirection(byte value)
-	{
-		direction = value;
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-	}
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
 
-	public boolean getOpen()
-	{
-		return open;
-	}
+    public void setOpen(boolean value) {
+        open = value;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
-	public byte getDirection()
-	{
-		return direction;
-	}
+    public void setDirection(byte value) {
+        direction = value;
+        worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbt)
-	{
-		super.readFromNBT(nbt);
-		open = nbt.getBoolean("open");
-		direction = nbt.getByte("dir");
-	}
+    public boolean getOpen() {
+        return open;
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbt)
-	{
-		super.writeToNBT(nbt);
-		nbt.setBoolean("open", open);
-		nbt.setByte("dir", direction);
-	}
+    public byte getDirection() {
+        return direction;
+    }
 
-	@Override
-	public void handleInitPacket(NBTTagCompound nbt) {
-		open = nbt.getBoolean("open");
-		direction = nbt.getByte("dir");
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        open = nbt.getBoolean("open");
+        direction = nbt.getByte("dir");
+    }
 
-	@Override
-	public void handleDataPacket(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setBoolean("open", open);
+        nbt.setByte("dir", direction);
+    }
 
-	}
+    @Override
+    public void handleInitPacket(NBTTagCompound nbt) {
+        open = nbt.getBoolean("open");
+        direction = nbt.getByte("dir");
+    }
 
-	@Override
-	public void createDataNBT(NBTTagCompound nbt) {
-		// TODO Auto-generated method stub
+    @Override
+    public void handleDataPacket(NBTTagCompound nbt) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
-	@Override
-	public void createInitNBT(NBTTagCompound nbt) {
-		nbt.setBoolean("open", open);
-		nbt.setByte("dir", direction);
-	}
+    @Override
+    public void createDataNBT(NBTTagCompound nbt) {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void createInitNBT(NBTTagCompound nbt) {
+        nbt.setBoolean("open", open);
+        nbt.setByte("dir", direction);
+    }
 
 }

@@ -8,62 +8,63 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.util.ResourceLocation;
 
+import org.apache.logging.log4j.LogManager;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-
-import org.apache.logging.log4j.LogManager;
 
 @SideOnly(Side.CLIENT)
 public class EntityRendererTFC extends EntityRenderer {
 
-	private boolean allowShaderSwitching = true;
-	private ResourceLocation currentShader;
+    private boolean allowShaderSwitching = true;
+    private ResourceLocation currentShader;
 
-	public EntityRendererTFC(Minecraft minecraft, IResourceManager irm) {
-		super(minecraft, irm);
-	}
+    public EntityRendererTFC(Minecraft minecraft, IResourceManager irm) {
+        super(minecraft, irm);
+    }
 
-	@Override
-	public void deactivateShader()
-	{
-		if(allowShaderSwitching){
-			super.activateNextShader();
-		}
-	}
+    @Override
+    public void deactivateShader() {
+        if (allowShaderSwitching) {
+            super.activateNextShader();
+        }
+    }
 
-	public void setManualShader(ResourceLocation shaderLocation){
-		deactivateManualShader();
-		try{
-			Minecraft mc = Minecraft.getMinecraft();
-			this.theShaderGroup = new ShaderGroup(mc.getTextureManager(), mc.getResourceManager(), mc.getFramebuffer(), shaderLocation);
-			this.theShaderGroup.createBindFramebuffers(mc.displayWidth, mc.displayHeight);
-			this.currentShader = shaderLocation;
-		}
-		catch (IOException ioexception)
-		{
-			LogManager.getLogger().warn("Failed to load shader: " + shaderLocation, ioexception);
-		}
-		allowShaderSwitching = false;
-	}
+    public void setManualShader(ResourceLocation shaderLocation) {
+        deactivateManualShader();
+        try {
+            Minecraft mc = Minecraft.getMinecraft();
+            this.theShaderGroup = new ShaderGroup(
+                mc.getTextureManager(),
+                mc.getResourceManager(),
+                mc.getFramebuffer(),
+                shaderLocation);
+            this.theShaderGroup.createBindFramebuffers(mc.displayWidth, mc.displayHeight);
+            this.currentShader = shaderLocation;
+        } catch (IOException ioexception) {
+            LogManager.getLogger()
+                .warn("Failed to load shader: " + shaderLocation, ioexception);
+        }
+        allowShaderSwitching = false;
+    }
 
-	public void deactivateManualShader(){
-		allowShaderSwitching = true;
-		super.deactivateShader();
-	}
-	
-	public ResourceLocation getCurrentShaderLocation(){
-		return this.currentShader;
-	}
+    public void deactivateManualShader() {
+        allowShaderSwitching = true;
+        super.deactivateShader();
+    }
 
-	public boolean getManualShaderBeingUsed(){
-		return !this.allowShaderSwitching;
-	}
+    public ResourceLocation getCurrentShaderLocation() {
+        return this.currentShader;
+    }
 
-	@Override
-	public void activateNextShader()
-	{
-		if(allowShaderSwitching){
-			super.activateNextShader();
-		}
-	}
+    public boolean getManualShaderBeingUsed() {
+        return !this.allowShaderSwitching;
+    }
+
+    @Override
+    public void activateNextShader() {
+        if (allowShaderSwitching) {
+            super.activateNextShader();
+        }
+    }
 }

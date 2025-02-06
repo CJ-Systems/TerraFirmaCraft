@@ -5,112 +5,94 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
+public class HeatRegistry {
 
-public class HeatRegistry
-{
-	private static final HeatRegistry INSTANCE = new HeatRegistry();
-	public static final HeatRegistry getInstance()
-	{
-		return INSTANCE;
-	}
+    private static final HeatRegistry INSTANCE = new HeatRegistry();
 
-	private List<HeatIndex> heatList;
+    public static final HeatRegistry getInstance() {
+        return INSTANCE;
+    }
 
-	private HeatRegistry()
-	{
-		heatList = new ArrayList<HeatIndex>();
-	}
+    private List<HeatIndex> heatList;
 
-	public void addIndex(HeatIndex index)
-	{
-		heatList.add(index);
-	}
+    private HeatRegistry() {
+        heatList = new ArrayList<HeatIndex>();
+    }
 
-	public List<HeatIndex> getHeatList()
-	{
-		return heatList;
-	}
+    public void addIndex(HeatIndex index) {
+        heatList.add(index);
+    }
 
-	public HeatIndex findMatchingIndex(ItemStack input)
-	{
-		for (int k = 0; k < heatList.size(); k++)
-		{
-			HeatIndex tempIndex = heatList.get(k);
-			if (tempIndex.matches(input))
-			{
-				return tempIndex;
-			}
-		}
+    public List<HeatIndex> getHeatList() {
+        return heatList;
+    }
 
-		return null;
-	}
+    public HeatIndex findMatchingIndex(ItemStack input) {
+        for (int k = 0; k < heatList.size(); k++) {
+            HeatIndex tempIndex = heatList.get(k);
+            if (tempIndex.matches(input)) {
+                return tempIndex;
+            }
+        }
 
-	public Boolean getIsLiquid(ItemStack is)
-	{       
-		HeatIndex hi = INSTANCE.findMatchingIndex(is);
-		if(hi != null && is.hasTagCompound())
-		{
-			float temp = 0;
-			if(is.getTagCompound().hasKey("temperature")) {
-				temp = is.getTagCompound().getFloat("temperature");
-			}
-			return temp >= hi.meltTemp;
-		} else {
-			return false;
-		}
-	}
+        return null;
+    }
 
-	public float getMeltingPoint(ItemStack is)
-	{       
-		HeatIndex hi = findMatchingIndex(is);
-		if(hi != null)
-		{
-			return hi.meltTemp;
-		} else {
-			return -1;
-		}
+    public Boolean getIsLiquid(ItemStack is) {
+        HeatIndex hi = INSTANCE.findMatchingIndex(is);
+        if (hi != null && is.hasTagCompound()) {
+            float temp = 0;
+            if (is.getTagCompound()
+                .hasKey("temperature")) {
+                temp = is.getTagCompound()
+                    .getFloat("temperature");
+            }
+            return temp >= hi.meltTemp;
+        } else {
+            return false;
+        }
+    }
 
-	}
+    public float getMeltingPoint(ItemStack is) {
+        HeatIndex hi = findMatchingIndex(is);
+        if (hi != null) {
+            return hi.meltTemp;
+        } else {
+            return -1;
+        }
 
-	public Boolean isTemperatureWeldable(ItemStack is)
-	{
-		if(TFC_ItemHeat.hasTemp(is))
-		{
-			HeatIndex index = INSTANCE.findMatchingIndex(is);
-			if(index != null)
-			{
-				float temp = TFC_ItemHeat.getTemp(is);
-				return temp < index.meltTemp && temp > index.meltTemp *0.8;
-			}
-		}
-		return false;
-	}
+    }
 
-	public Boolean isTemperatureWorkable(ItemStack is)
-	{
-		if(TFC_ItemHeat.hasTemp(is))
-		{
-			HeatIndex index = INSTANCE.findMatchingIndex(is);
-			if(index != null)
-			{
-				float temp = TFC_ItemHeat.getTemp(is);
-				return temp < index.meltTemp && temp > index.meltTemp * 0.60;
-			}
-		}
-		return false;
-	}
+    public Boolean isTemperatureWeldable(ItemStack is) {
+        if (TFC_ItemHeat.hasTemp(is)) {
+            HeatIndex index = INSTANCE.findMatchingIndex(is);
+            if (index != null) {
+                float temp = TFC_ItemHeat.getTemp(is);
+                return temp < index.meltTemp && temp > index.meltTemp * 0.8;
+            }
+        }
+        return false;
+    }
 
-	public Boolean isTemperatureDanger(ItemStack is)
-	{
-		if(TFC_ItemHeat.hasTemp(is))
-		{
-			HeatIndex index = INSTANCE.findMatchingIndex(is);
-			if(index != null)
-			{
-				float temp = TFC_ItemHeat.getTemp(is);
-				return temp < index.meltTemp && temp > index.meltTemp * 0.90;
-			}
-		}
-		return false;
-	}
+    public Boolean isTemperatureWorkable(ItemStack is) {
+        if (TFC_ItemHeat.hasTemp(is)) {
+            HeatIndex index = INSTANCE.findMatchingIndex(is);
+            if (index != null) {
+                float temp = TFC_ItemHeat.getTemp(is);
+                return temp < index.meltTemp && temp > index.meltTemp * 0.60;
+            }
+        }
+        return false;
+    }
+
+    public Boolean isTemperatureDanger(ItemStack is) {
+        if (TFC_ItemHeat.hasTemp(is)) {
+            HeatIndex index = INSTANCE.findMatchingIndex(is);
+            if (index != null) {
+                float temp = TFC_ItemHeat.getTemp(is);
+                return temp < index.meltTemp && temp > index.meltTemp * 0.90;
+            }
+        }
+        return false;
+    }
 }

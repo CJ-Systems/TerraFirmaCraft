@@ -4,37 +4,33 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import com.bioxx.tfc.Reference;
 import com.bioxx.tfc.Containers.ContainerQuiver;
+import com.bioxx.tfc.Reference;
 
-public class GuiQuiver extends GuiContainerTFC
-{
-	public static ResourceLocation texture = new ResourceLocation(Reference.MOD_ID, Reference.ASSET_PATH_GUI + "gui_quiver.png");
+public class GuiQuiver extends GuiContainerTFC {
 
-	public GuiQuiver(InventoryPlayer inventoryplayer, World world, int i, int j, int k)
-	{
-		super(new ContainerQuiver(inventoryplayer, world, i, j, k), 176, 49);
-	}
+    public static ResourceLocation texture = new ResourceLocation(
+        Reference.MOD_ID,
+        Reference.ASSET_PATH_GUI + "gui_quiver.png");
 
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float f, int i, int j)
-	{
-		this.drawGui(texture);
-	}
+    public GuiQuiver(InventoryPlayer inventoryplayer, World world, int i, int j, int k) {
+        super(new ContainerQuiver(inventoryplayer, world, i, j, k), 176, 49);
+    }
 
-	/**
-	 * This function is what controls the hotbar shortcut check when you press a
-	 * number key when hovering a stack.
-	 */
-	@Override
-	protected boolean checkHotbarKeys(int par1)
-	{
-		if (this.mc.thePlayer.inventory.currentItem != par1 - 2)
-		{
-			super.checkHotbarKeys(par1);
-			return true;
-		}
-		else
-			return false;
-	}
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float f, int i, int j) {
+        this.drawGui(texture);
+    }
+
+    /**
+     * This function is what controls the hotbar shortcut check when you press a
+     * number key when hovering a stack.
+     */
+    @Override
+    protected boolean checkHotbarKeys(int par1) {
+        if (this.mc.thePlayer.inventory.currentItem != par1 - 2) {
+            super.checkHotbarKeys(par1);
+            return true;
+        } else return false;
+    }
 }

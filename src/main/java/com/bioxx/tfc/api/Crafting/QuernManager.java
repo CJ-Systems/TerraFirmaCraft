@@ -5,58 +5,48 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-public class QuernManager
-{
-	private static final QuernManager INSTANCE = new QuernManager();
-	public static final QuernManager getInstance()
-	{
-		return INSTANCE;
-	}
+public class QuernManager {
 
-	private List<QuernRecipe> recipes;
-	private List<ItemStack> validItems;
+    private static final QuernManager INSTANCE = new QuernManager();
 
-	private QuernManager()
-	{
-		recipes = new ArrayList<QuernRecipe>();
-		validItems = new ArrayList<ItemStack>();
-	}
+    public static final QuernManager getInstance() {
+        return INSTANCE;
+    }
 
-	public void addRecipe(QuernRecipe recipe)
-	{
-		recipes.add(recipe);
-		validItems.add(recipe.getInItem());
-	}
+    private List<QuernRecipe> recipes;
+    private List<ItemStack> validItems;
 
-	public Boolean isValidItem(ItemStack is)
-	{
-		for(Object vi : validItems)
-		{
-			ItemStack vis = (ItemStack) vi;
-			if(vis.getItem() == is.getItem() && vis.getItemDamage() == is.getItemDamage())
-				return true;
-		}
-		return false;
-	}
+    private QuernManager() {
+        recipes = new ArrayList<QuernRecipe>();
+        validItems = new ArrayList<ItemStack>();
+    }
 
-	public QuernRecipe findMatchingRecipe(ItemStack is)
-	{
-		for(Object recipe : recipes)
-		{
-			QuernRecipe qr = (QuernRecipe) recipe;
-			if(qr.isInItem(is))
-				return qr;
-		}
-		return null;
-	}
+    public void addRecipe(QuernRecipe recipe) {
+        recipes.add(recipe);
+        validItems.add(recipe.getInItem());
+    }
 
-	public List<QuernRecipe> getRecipes()
-    {
+    public Boolean isValidItem(ItemStack is) {
+        for (Object vi : validItems) {
+            ItemStack vis = (ItemStack) vi;
+            if (vis.getItem() == is.getItem() && vis.getMetadata() == is.getMetadata()) return true;
+        }
+        return false;
+    }
+
+    public QuernRecipe findMatchingRecipe(ItemStack is) {
+        for (Object recipe : recipes) {
+            QuernRecipe qr = (QuernRecipe) recipe;
+            if (qr.isInItem(is)) return qr;
+        }
+        return null;
+    }
+
+    public List<QuernRecipe> getRecipes() {
         return recipes;
     }
 
-	public List<ItemStack> getValidItems()
-    {
+    public List<ItemStack> getValidItems() {
         return validItems;
     }
 }

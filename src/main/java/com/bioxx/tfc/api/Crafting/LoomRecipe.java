@@ -1,79 +1,68 @@
 package com.bioxx.tfc.api.Crafting;
 
 import net.minecraft.item.ItemStack;
-
 import net.minecraftforge.oredict.OreDictionary;
 
-public class LoomRecipe
-{
-	public ItemStack inItemStack;
-	public ItemStack outItemStack;
-	public int inSize;
+public class LoomRecipe {
 
-	public LoomRecipe(ItemStack inputItem, ItemStack outIS)
-	{
-		this.inItemStack = inputItem;
-		this.outItemStack = outIS;
-		this.inSize = inputItem.stackSize;
-	}
+    public ItemStack inItemStack;
+    public ItemStack outItemStack;
+    public int inSize;
 
-	public Boolean matches(ItemStack item)
-	{
-		boolean iStack = inItemStack != null && item != null && item.stackSize == inItemStack.stackSize;
+    public LoomRecipe(ItemStack inputItem, ItemStack outIS) {
+        this.inItemStack = inputItem;
+        this.outItemStack = outIS;
+        this.inSize = inputItem.stackSize;
+    }
 
-		boolean itemsEqual = OreDictionary.itemMatches(inItemStack, item, false);
+    public Boolean matches(ItemStack item) {
+        boolean iStack = inItemStack != null && item != null && item.stackSize == inItemStack.stackSize;
 
-		return iStack && itemsEqual;
-	}
+        boolean itemsEqual = OreDictionary.itemMatches(inItemStack, item, false);
 
-	public Boolean resultMatches(ItemStack item)
-	{
-		boolean iStack = outItemStack != null && item != null && item.stackSize == outItemStack.stackSize;
+        return iStack && itemsEqual;
+    }
 
-		boolean itemsEqual = OreDictionary.itemMatches(outItemStack, item, false);
+    public Boolean resultMatches(ItemStack item) {
+        boolean iStack = outItemStack != null && item != null && item.stackSize == outItemStack.stackSize;
 
-		return iStack && itemsEqual;
-	}
-	
-	public Boolean partiallyMatches(ItemStack item)
-	{
-		boolean iStack = inItemStack != null && item != null;
+        boolean itemsEqual = OreDictionary.itemMatches(outItemStack, item, false);
 
-		boolean itemsEqual = OreDictionary.itemMatches(inItemStack, item, false);
+        return iStack && itemsEqual;
+    }
 
-		return iStack && itemsEqual;
-	}
+    public Boolean partiallyMatches(ItemStack item) {
+        boolean iStack = inItemStack != null && item != null;
 
-	public ItemStack getInItem()
-	{
-		return inItemStack;
-	}
+        boolean itemsEqual = OreDictionary.itemMatches(inItemStack, item, false);
 
-	public int getReqSize(){
-		return inSize;
-	}
-	
-	public String getRecipeName()
-	{
-		String s = "";
-		if(this.outItemStack != null)
-			s=/*outItemStack.stackSize+"x " +*/ outItemStack.getDisplayName();
-		return s;
-	}
+        return iStack && itemsEqual;
+    }
 
-	public ItemStack getResult(ItemStack inIS)
-	{
-		ItemStack is = null;
-		if(outItemStack != null)
-		{
-			is = outItemStack.copy();
-			return is;
-		}
-		return is;
-	}
+    public ItemStack getInItem() {
+        return inItemStack;
+    }
 
-    public ItemStack getOutItemStack()
-    {
+    public int getReqSize() {
+        return inSize;
+    }
+
+    public String getRecipeName() {
+        String s = "";
+        if (this.outItemStack != null) s = /* outItemStack.stackSize+"x " + */ outItemStack.getDisplayName();
+        return s;
+    }
+
+    public ItemStack getResult(ItemStack inIS) {
+        ItemStack is = null;
+        if (outItemStack != null) {
+            is = outItemStack.copy();
+            return is;
+        }
+        return is;
+    }
+
+    public ItemStack getOutItemStack() {
         return outItemStack;
     }
 }

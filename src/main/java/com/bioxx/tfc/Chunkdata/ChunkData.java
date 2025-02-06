@@ -8,144 +8,139 @@ import com.bioxx.tfc.Core.TFC_Time;
 import com.bioxx.tfc.WorldGen.DataLayer;
 import com.bioxx.tfc.api.TFCOptions;
 
-public class ChunkData 
-{
-	public int chunkX;
-	public int chunkZ;
-	public long lastVisited;
-	public long previousVisit;
-	public int spawnProtection;
-	public int protectionBuffer = TFCOptions.protectionBuffer >= 0 ? TFCOptions.protectionBuffer * -1 : -24; //Set buffer to default if invalid value in config.
-	public int[] heightmap;
-	public DataLayer[] rainfallMap;
+public class ChunkData {
 
-	public int sluicedAmount;
+    public int chunkX;
+    public int chunkZ;
+    public long lastVisited;
+    public long previousVisit;
+    public int spawnProtection;
+    public int protectionBuffer = TFCOptions.protectionBuffer >= 0 ? TFCOptions.protectionBuffer * -1 : -24; // Set
+                                                                                                             // buffer
+                                                                                                             // to
+                                                                                                             // default
+                                                                                                             // if
+                                                                                                             // invalid
+                                                                                                             // value in
+                                                                                                             // config.
+    public int[] heightmap;
+    public DataLayer[] rainfallMap;
 
-	public float fishPop = -1;
-	public static final float FISH_POP_MAX = 60;
+    public int sluicedAmount;
 
-	public int lastSpringGen;
-	public int cropInfestation;
-	public boolean isUnloaded;
-	
-	private final Chunk chunk;
+    public float fishPop = -1;
+    public static final float FISH_POP_MAX = 60;
 
-	public ChunkData(Chunk chunk)
-	{
-		this.chunk = chunk;
-		
-		heightmap = new int[256];
-		rainfallMap = new DataLayer[256];
-	}
+    public int lastSpringGen;
+    public int cropInfestation;
+    public boolean isUnloaded;
 
-	public ChunkData(Chunk chunk, NBTTagCompound tag)
-	{
-		this.chunk = chunk;
-		
-		chunkX = tag.getInteger("chunkX");  // could be removed, but that's too radical
-		chunkZ = tag.getInteger("chunkZ");
-		lastVisited = tag.getLong("lastVisited");
-		spawnProtection = tag.getInteger("spawnProtection");
+    private final Chunk chunk;
 
-		updateSpawnProtection();
+    public ChunkData(Chunk chunk) {
+        this.chunk = chunk;
 
-		heightmap = tag.getIntArray("heightmap");
-		if(heightmap.length == 0)
-			heightmap = new int[256];
-		sluicedAmount = tag.getInteger("sluicedAmount");
+        heightmap = new int[256];
+        rainfallMap = new DataLayer[256];
+    }
 
-		lastSpringGen = tag.getInteger("lastSpringGen");
-		cropInfestation = tag.getInteger("cropInfestation");
+    public ChunkData(Chunk chunk, NBTTagCompound tag) {
+        this.chunk = chunk;
 
-		fishPop = Math.min(tag.getFloat("fishPopulation"),FISH_POP_MAX);
-	}
+        chunkX = tag.getInteger("chunkX"); // could be removed, but that's too radical
+        chunkZ = tag.getInteger("chunkZ");
+        lastVisited = tag.getLong("lastVisited");
+        spawnProtection = tag.getInteger("spawnProtection");
 
-	public NBTTagCompound getTag()
-	{
-		NBTTagCompound tag = new NBTTagCompound();
+        updateSpawnProtection();
 
-		tag.setInteger("chunkX", chunkX);
-		tag.setInteger("chunkZ", chunkZ);
-		
-		updateSpawnProtection();
-		
-		tag.setInteger("spawnProtection", spawnProtection);
-		tag.setLong("lastVisited", lastVisited);
-		tag.setIntArray("heightmap", heightmap);
-		tag.setInteger("lastSpringGen", lastSpringGen);
-		tag.setInteger("sluicedAmount", sluicedAmount);
-		tag.setInteger("cropInfestation", cropInfestation);
-		tag.setFloat("fishPopulation", Math.max(fishPop,-1F));
-		return tag;
-	}
+        heightmap = tag.getIntArray("heightmap");
+        if (heightmap.length == 0) heightmap = new int[256];
+        sluicedAmount = tag.getInteger("sluicedAmount");
 
-	public ChunkData createNew(World world, int x, int z)
-	{
-		chunkX = x;
-		chunkZ = z;
-		lastVisited = 0;
-		spawnProtection = protectionBuffer;
-		lastSpringGen = TFC_Time.getYear();
-		return this;
-	}
+        lastSpringGen = tag.getInteger("lastSpringGen");
+        cropInfestation = tag.getInteger("cropInfestation");
 
-	public int getSpawnProtectionWithUpdate()
-	{
-		updateSpawnProtection();
+        fishPop = Math.min(tag.getFloat("fishPopulation"), FISH_POP_MAX);
+    }
 
-		if (spawnProtection > 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths)
-			spawnProtection = 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths;
+    public NBTTagCompound getTag() {
+        NBTTagCompound tag = new NBTTagCompound();
 
-		return spawnProtection;
-	}
+        tag.setInteger("chunkX", chunkX);
+        tag.setInteger("chunkZ", chunkZ);
 
-	public void setSpawnProtectionWithUpdate(int amount)
-	{
-		updateSpawnProtection();
-		
-		spawnProtection += amount;
+        updateSpawnProtection();
 
-		if (spawnProtection > 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths)
-			spawnProtection = 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths;
-	}
-	
-	private void updateSpawnProtection()
-	{
-		long now = TFC_Time.getTotalTicks();
-		
-		if (lastVisited < now)
-		{
-			long visit = (now - lastVisited) / TFC_Time.HOUR_LENGTH;
-			spawnProtection -= visit;
-			lastVisited += visit * TFC_Time.HOUR_LENGTH;  // =now, but taking rounding from integer division above into account
+        tag.setInteger("spawnProtection", spawnProtection);
+        tag.setLong("lastVisited", lastVisited);
+        tag.setIntArray("heightmap", heightmap);
+        tag.setInteger("lastSpringGen", lastSpringGen);
+        tag.setInteger("sluicedAmount", sluicedAmount);
+        tag.setInteger("cropInfestation", cropInfestation);
+        tag.setFloat("fishPopulation", Math.max(fishPop, -1F));
+        return tag;
+    }
 
-			if (spawnProtection < protectionBuffer)
-				spawnProtection = protectionBuffer;
-		
-			chunk.setChunkModified();
-		}
-	}
+    public ChunkData createNew(World world, int x, int z) {
+        chunkX = x;
+        chunkZ = z;
+        lastVisited = 0;
+        spawnProtection = protectionBuffer;
+        lastSpringGen = TFC_Time.getYear();
+        return this;
+    }
 
-	public void infest()
-	{
-		Math.min(cropInfestation++, 10);
-	}
+    public int getSpawnProtectionWithUpdate() {
+        updateSpawnProtection();
 
-	public void uninfest()
-	{
-		Math.max(cropInfestation--, 0);
-	}
+        if (spawnProtection > 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths)
+            spawnProtection = 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths;
 
-	/**
-	 * Returns a cached rainfall value for this chunk. The cache is created client side when the chunk loads on the client.
-	 * @param x Chunk X
-	 * @param z Chunk Z
-	 */
-	public float getRainfall(int x, int z)
-	{
-		if (rainfallMap[x * z] != null)
-			return rainfallMap[x * z].floatdata1;
-		else
-			return 0.0f;
-	}
+        return spawnProtection;
+    }
+
+    public void setSpawnProtectionWithUpdate(int amount) {
+        updateSpawnProtection();
+
+        spawnProtection += amount;
+
+        if (spawnProtection > 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths)
+            spawnProtection = 24 * TFC_Time.daysInMonth * TFCOptions.maxProtectionMonths;
+    }
+
+    private void updateSpawnProtection() {
+        long now = TFC_Time.getTotalTicks();
+
+        if (lastVisited < now) {
+            long visit = (now - lastVisited) / TFC_Time.HOUR_LENGTH;
+            spawnProtection -= visit;
+            lastVisited += visit * TFC_Time.HOUR_LENGTH; // =now, but taking rounding from integer division above into
+                                                         // account
+
+            if (spawnProtection < protectionBuffer) spawnProtection = protectionBuffer;
+
+            chunk.setChunkModified();
+        }
+    }
+
+    public void infest() {
+        Math.min(cropInfestation++, 10);
+    }
+
+    public void uninfest() {
+        Math.max(cropInfestation--, 0);
+    }
+
+    /**
+     * Returns a cached rainfall value for this chunk. The cache is created client side when the chunk loads on the
+     * client.
+     *
+     * @param x Chunk X
+     * @param z Chunk Z
+     */
+    public float getRainfall(int x, int z) {
+        if (rainfallMap[x * z] != null) return rainfallMap[x * z].floatdata1;
+        else return 0.0f;
+    }
 }

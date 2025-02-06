@@ -1,51 +1,43 @@
 package com.bioxx.tfc.Core;
 
 import net.minecraft.util.IIcon;
-
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
 import com.bioxx.tfc.api.TFCBlocks;
 
-public class FluidBaseTFC extends Fluid
-{
-	public FluidBaseTFC(String fluidName) {
-		super(fluidName);
-	}
+public class FluidBaseTFC extends Fluid {
 
-	private int color = 0xffffff;
+    public FluidBaseTFC(String fluidName) {
+        super(fluidName);
+    }
 
-	public FluidBaseTFC setBaseColor(int c)
-	{
-		color = c;
-		return this;
-	}
+    private int color = 0xffffff;
 
-	@Override
-	public int getColor(FluidStack fs)
-	{
-		return color;
-	}
+    public FluidBaseTFC setBaseColor(int c) {
+        color = c;
+        return this;
+    }
 
-	@Override
-	public int getColor()
-	{
-		return color;
-	}
+    @Override
+    public int getColor(FluidStack fs) {
+        return color;
+    }
 
-	@Override
-	public IIcon getStillIcon()
-	{
-		if(this.stillIcon == null)
-			return TFCBlocks.hotWater.getIcon(0, 0);
-		return this.stillIcon;
-	}
+    @Override
+    public int getColor() {
+        return color;
+    }
 
-	@Override
-	public IIcon getFlowingIcon()
-	{
-		if(this.flowingIcon == null)
-			return TFCBlocks.hotWater.getIcon(2, 0);
-		return this.flowingIcon;
-	}
+    @Override
+    public IIcon getStillIcon() {
+        if (this.stillIcon == null) return TFCBlocks.hotWater.getIcon(0, 0);
+        return this.stillIcon;
+    }
+
+    @Override
+    public IIcon getFlowingIcon() {
+        if (this.flowingIcon == null) return TFCBlocks.hotWater.getIcon(2, 0);
+        return this.flowingIcon;
+    }
 }

@@ -14,110 +14,109 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.world.World;
-
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-
+import com.bioxx.tfc.Core.Player.FoodStatsTFC;
 import com.bioxx.tfc.Core.TFC_Core;
 import com.bioxx.tfc.Core.TFC_Time;
-import com.bioxx.tfc.Core.Player.FoodStatsTFC;
 import com.bioxx.tfc.api.TFCBlocks;
 import com.bioxx.tfc.api.TFCItems;
 import com.bioxx.tfc.api.Util.Helper;
 
-public class PlayerInteractHandler
-{
-	private Map<UUID, Long> lastDrink = new HashMap<UUID, Long>();
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
-	@SubscribeEvent
-	public void onPlayerInteract(PlayerInteractEvent event)
-	{
-		if (event.entityPlayer.worldObj.isRemote)
-			return;
+public class PlayerInteractHandler {
 
-		ItemStack itemInHand = event.entityPlayer.getCurrentEquippedItem();
+    private Map<UUID, Long> lastDrink = new HashMap<UUID, Long>();
 
-		boolean validAction = event.action == Action.RIGHT_CLICK_BLOCK || event.action == Action.RIGHT_CLICK_AIR;
+    @SubscribeEvent
+    public void onPlayerInteract(PlayerInteractEvent event) {
+        if (event.entityPlayer.worldObj.isRemote) return;
 
-		if(validAction && event.getResult() != Result.DENY && itemInHand == null)
-		{
-			handleDrinkingWater( event.entityPlayer );
-		}
-	}
+        ItemStack itemInHand = event.entityPlayer.getCurrentEquippedItem();
 
-	private void handleDrinkingWater(EntityPlayer entityPlayer)
-	{
-		Long lastCheck = lastDrink.get(entityPlayer.getUniqueID());
-		if(lastCheck != null && lastCheck + 20 > TFC_Time.getTotalTicks())
-			return;
-		lastDrink.put(entityPlayer.getUniqueID(), TFC_Time.getTotalTicks());
-		World world = entityPlayer.worldObj;
-		MovingObjectPosition mop = Helper.getMovingObjectPositionFromPlayer(world, entityPlayer, true);
-		FoodStatsTFC fs = TFC_Core.getPlayerFoodStats(entityPlayer);
-		Boolean canDrink = fs.getMaxWater(entityPlayer) - 500 > fs.waterLevel;
+        boolean validAction = event.action == Action.RIGHT_CLICK_BLOCK || event.action == Action.RIGHT_CLICK_AIR;
 
-		// if we found a block, and we can drink proceed
-		if(mop != null && canDrink && mop.typeOfHit == MovingObjectType.BLOCK)
-		{
-			if( TFC_Core.isFreshWater(world.getBlock(mop.blockX, mop.blockY, mop.blockZ)) )
-			{
-				// recover a portion of players water, this is intentionally slow,
-				fs.restoreWater(entityPlayer, 2000);
+        if (validAction && event.getResult() != Result.DENY && itemInHand == null) {
+            handleDrinkingWater(event.entityPlayer);
+        }
+    }
 
-				// drinking sound..
-				world.playSoundAtEntity(entityPlayer,"random.drink", 0.2F, world.rand.nextFloat() * 0.1F + 0.9F);
-			}
-		}
-	}
+    private void handleDrinkingWater(EntityPlayer entityPlayer) {
+        Long lastCheck = lastDrink.get(entityPlayer.getUniqueID());
+        if (lastCheck != null && lastCheck + 20 > TFC_Time.getTotalTicks()) return;
+        lastDrink.put(entityPlayer.getUniqueID(), TFC_Time.getTotalTicks());
+        World world = entityPlayer.worldObj;
+        MovingObjectPosition mop = Helper.getMovingObjectPositionFromPlayer(world, entityPlayer, true);
+        FoodStatsTFC fs = TFC_Core.getPlayerFoodStats(entityPlayer);
+        Boolean canDrink = fs.getMaxWater(entityPlayer) - 500 > fs.waterLevel;
 
-	/**
-	 * When a player picks up a vanilla item it will get replaced with
-	 * the appropriate TFC item. This will solve problems like the boat
-	 * crash dropping vanilla sticks and planks.
-	 */
-	@SubscribeEvent
-	public void onItemPickup(EntityItemPickupEvent event)
-	{
-		EntityItem item = event.item;
-		ItemStack is = item.getEntityItem();
-		EntityPlayer player = event.entityPlayer;
+        // if we found a block, and we can drink proceed
+        if (mop != null && canDrink && mop.typeOfHit == MovingObjectType.BLOCK) {
+            if (TFC_Core.isFreshWater(world.getBlock(mop.blockX, mop.blockY, mop.blockZ))) {
+                // recover a portion of players water, this is intentionally slow,
+                fs.restoreWater(entityPlayer, 2000);
 
-		if (is.getItem() == Items.stick)
-		{
-			int count = is.stackSize;
-			item.delayBeforeCanPickup = 100;
-			item.setDead();
-			item.setInvisible(true);
-			Random rand = player.worldObj.rand;
-			player.worldObj.playSoundAtEntity(player, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			ItemStack tfcSticks = new ItemStack(TFCItems.stick, count);
-			player.inventory.addItemStackToInventory(tfcSticks);
-		}
-		else if (is.getItem() == Item.getItemFromBlock(Blocks.planks) && is.getItemDamage() == 0) // Only Oak
-		{
-			int count = is.stackSize;
-			item.delayBeforeCanPickup = 100;
-			item.setDead();
-			item.setInvisible(true);
-			Random rand = player.worldObj.rand;
-			player.worldObj.playSoundAtEntity(player, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			ItemStack tfcPlanks = new ItemStack(TFCBlocks.planks, count);
-			player.inventory.addItemStackToInventory(tfcPlanks);
-		}
-		else if (is.getItem() == Item.getItemFromBlock(Blocks.lit_pumpkin))
-		{
-			int count = is.stackSize;
-			item.delayBeforeCanPickup = 100;
-			item.setDead();
-			item.setInvisible(true);
-			Random rand = player.worldObj.rand;
-			player.worldObj.playSoundAtEntity(player, "random.pop", 0.2F, ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
-			ItemStack jackOLanternTFC = new ItemStack(TFCBlocks.litPumpkin, count);
-			player.inventory.addItemStackToInventory(jackOLanternTFC);
-		}
-	}
+                // drinking sound..
+                world.playSoundAtEntity(entityPlayer, "random.drink", 0.2F, world.rand.nextFloat() * 0.1F + 0.9F);
+            }
+        }
+    }
+
+    /**
+     * When a player picks up a vanilla item it will get replaced with
+     * the appropriate TFC item. This will solve problems like the boat
+     * crash dropping vanilla sticks and planks.
+     */
+    @SubscribeEvent
+    public void onItemPickup(EntityItemPickupEvent event) {
+        EntityItem item = event.item;
+        ItemStack is = item.getEntityItem();
+        EntityPlayer player = event.entityPlayer;
+
+        if (is.getItem() == Items.stick) {
+            int count = is.stackSize;
+            item.delayBeforeCanPickup = 100;
+            item.setDead();
+            item.setInvisible(true);
+            Random rand = player.worldObj.rand;
+            player.worldObj.playSoundAtEntity(
+                player,
+                "random.pop",
+                0.2F,
+                ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            ItemStack tfcSticks = new ItemStack(TFCItems.stick, count);
+            player.inventory.addItemStackToInventory(tfcSticks);
+        } else if (is.getItem() == Item.getItemFromBlock(Blocks.planks) && is.getMetadata() == 0) // Only Oak
+        {
+            int count = is.stackSize;
+            item.delayBeforeCanPickup = 100;
+            item.setDead();
+            item.setInvisible(true);
+            Random rand = player.worldObj.rand;
+            player.worldObj.playSoundAtEntity(
+                player,
+                "random.pop",
+                0.2F,
+                ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            ItemStack tfcPlanks = new ItemStack(TFCBlocks.planks, count);
+            player.inventory.addItemStackToInventory(tfcPlanks);
+        } else if (is.getItem() == Item.getItemFromBlock(Blocks.lit_pumpkin)) {
+            int count = is.stackSize;
+            item.delayBeforeCanPickup = 100;
+            item.setDead();
+            item.setInvisible(true);
+            Random rand = player.worldObj.rand;
+            player.worldObj.playSoundAtEntity(
+                player,
+                "random.pop",
+                0.2F,
+                ((rand.nextFloat() - rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
+            ItemStack jackOLanternTFC = new ItemStack(TFCBlocks.litPumpkin, count);
+            player.inventory.addItemStackToInventory(jackOLanternTFC);
+        }
+    }
 }

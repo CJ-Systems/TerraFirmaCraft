@@ -10,57 +10,55 @@ import com.bioxx.tfc.api.Enums.EnumWeight;
 import com.bioxx.tfc.api.Interfaces.IEquipable;
 import com.bioxx.tfc.api.Interfaces.ISmeltable;
 
-public abstract class ItemAnvil extends ItemTerraBlock implements ISmeltable, IEquipable
-{
-	public ItemAnvil(Block par1)
-	{
-		super(par1);
-	}
+public abstract class ItemAnvil extends ItemTerraBlock implements ISmeltable, IEquipable {
 
-	@Override
-	public EnumSize getSize(ItemStack is) {
-		return EnumSize.HUGE;
-	}
+    public ItemAnvil(Block par1) {
+        super(par1);
+    }
 
-	@Override
-	public EnumWeight getWeight(ItemStack is) {
-		return EnumWeight.HEAVY;
-	}
+    @Override
+    public EnumSize getSize(ItemStack is) {
+        return EnumSize.HUGE;
+    }
 
-	@Override
-	public short getMetalReturnAmount(ItemStack is) {
+    @Override
+    public EnumWeight getWeight(ItemStack is) {
+        return EnumWeight.HEAVY;
+    }
 
-		return 1400;
-	}
+    @Override
+    public short getMetalReturnAmount(ItemStack is) {
 
-	@Override
-	public boolean isSmeltable(ItemStack is) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+        return 1400;
+    }
 
-	@Override
-	public EnumTier getSmeltTier(ItemStack is) {
-		// TODO Auto-generated method stub
-		return EnumTier.TierI;
-	}
+    @Override
+    public boolean isSmeltable(ItemStack is) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-	@Override
-	public EquipType getEquipType(ItemStack is) {
-		// TODO Auto-generated method stub
-		return EquipType.BACK;
-	}
+    @Override
+    public EnumTier getSmeltTier(ItemStack is) {
+        // TODO Auto-generated method stub
+        return EnumTier.TierI;
+    }
 
-	@Override
-	public void onEquippedRender() 
-	{
-		GL11.glRotatef(90F, 1F, 0F, 0F);
-		GL11.glTranslatef(-0.5F, -0.5F, -0.3F);
-	}
+    @Override
+    public EquipType getEquipType(ItemStack is) {
+        // TODO Auto-generated method stub
+        return EquipType.BACK;
+    }
 
-	@Override
-	public boolean getTooHeavyToCarry(ItemStack is) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public void onEquippedRender() {
+        GL11.glRotatef(90F, 1F, 0F, 0F);
+        GL11.glTranslatef(-0.5F, -0.5F, -0.3F);
+    }
+
+    @Override
+    public boolean getTooHeavyToCarry(ItemStack is) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 }

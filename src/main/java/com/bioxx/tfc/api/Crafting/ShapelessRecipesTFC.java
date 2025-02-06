@@ -13,130 +13,114 @@ import net.minecraft.world.World;
 import com.bioxx.tfc.api.HeatRegistry;
 import com.bioxx.tfc.api.TFC_ItemHeat;
 
-public class ShapelessRecipesTFC implements IRecipe
-{
-	/** Is the ItemStack that you get when craft the recipe. */
-	private final ItemStack recipeOutput;
+public class ShapelessRecipesTFC implements IRecipe {
 
-	/** Is a List of ItemStack that composes the recipe. */
-	private final List recipeItems;
+    /** Is the ItemStack that you get when craft the recipe. */
+    private final ItemStack recipeOutput;
 
-	public ShapelessRecipesTFC(ItemStack par1ItemStack, List par2List)
-	{
-		this.recipeOutput = par1ItemStack;
-		this.recipeItems = par2List;
-	}
+    /** Is a List of ItemStack that composes the recipe. */
+    private final List recipeItems;
 
-	/**
-	 * Returns an Item that is the result of this recipe
-	 */
-	@Override
-	public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting)
-	{
-		return this.recipeOutput.copy();
-	}
+    public ShapelessRecipesTFC(ItemStack par1ItemStack, List par2List) {
+        this.recipeOutput = par1ItemStack;
+        this.recipeItems = par2List;
+    }
 
-	@Override
-	public ItemStack getRecipeOutput()
-	{
-		return this.recipeOutput;
-	}
+    /**
+     * Returns an Item that is the result of this recipe
+     */
+    @Override
+    public ItemStack getCraftingResult(InventoryCrafting par1InventoryCrafting) {
+        return this.recipeOutput.copy();
+    }
 
-	/**
-	 * Returns the size of the recipe area
-	 */
-	@Override
-	public int getRecipeSize()
-	{
-		return this.recipeItems.size();
-	}
+    @Override
+    public ItemStack getRecipeOutput() {
+        return this.recipeOutput;
+    }
 
-	/**
-	 * Used to check if a recipe matches current crafting inventory
-	 */
-	@Override
-	public boolean matches(InventoryCrafting par1InventoryCrafting, World world)
-	{
-		ArrayList var2 = new ArrayList(this.recipeItems);
+    /**
+     * Returns the size of the recipe area
+     */
+    @Override
+    public int getRecipeSize() {
+        return this.recipeItems.size();
+    }
 
-		for (int var3 = 0; var3 < 5; ++var3)
-		{
-			for (int var4 = 0; var4 < 5; ++var4)
-			{
-				ItemStack inputIS = par1InventoryCrafting.getStackInRowAndColumn(var4, var3);
+    /**
+     * Used to check if a recipe matches current crafting inventory
+     */
+    @Override
+    public boolean matches(InventoryCrafting par1InventoryCrafting, World world) {
+        ArrayList var2 = new ArrayList(this.recipeItems);
 
-				if (inputIS != null)
-				{
-					boolean var6 = false;
-					Iterator var7 = var2.iterator();
+        for (int var3 = 0; var3 < 5; ++var3) {
+            for (int var4 = 0; var4 < 5; ++var4) {
+                ItemStack inputIS = par1InventoryCrafting.getStackInRowAndColumn(var4, var3);
 
-					while (var7.hasNext())
-					{
-						ItemStack recipeIS = (ItemStack)var7.next();
+                if (inputIS != null) {
+                    boolean var6 = false;
+                    Iterator var7 = var2.iterator();
 
-						if (inputIS.getItem() == recipeIS.getItem() && (
-								recipeIS.getItemDamage() == 32767 ||
-								inputIS.getItemDamage() == recipeIS.getItemDamage()) &&
-								tempMatch(recipeIS, inputIS))
-						{
-							var6 = true;
-							var2.remove(recipeIS);
-							break;
-						}
-					}
+                    while (var7.hasNext()) {
+                        ItemStack recipeIS = (ItemStack) var7.next();
 
-					if (!var6)
-					{
-						return false;
-					}
-				}
-			}
-		}
+                        if (inputIS.getItem() == recipeIS.getItem()
+                            && (recipeIS.getMetadata() == 32767 || inputIS.getMetadata() == recipeIS.getMetadata())
+                            && tempMatch(recipeIS, inputIS)) {
+                            var6 = true;
+                            var2.remove(recipeIS);
+                            break;
+                        }
+                    }
 
-		return var2.isEmpty();
-	}
+                    if (!var6) {
+                        return false;
+                    }
+                }
+            }
+        }
 
-	private boolean tempMatch(ItemStack recipeIS, ItemStack inputIS)
-	{
-		NBTTagCompound rnbt = recipeIS.getTagCompound();
-		NBTTagCompound inbt = inputIS.getTagCompound();
+        return var2.isEmpty();
+    }
 
-		if(rnbt != null && rnbt.hasKey("noTemp"))
-		{
-			//Recipe expects a cold item and either the input has not tag at all or at the least is missing a temperature tag
-			return inbt == null || !TFC_ItemHeat.hasTemp(inputIS);
-		}
+    private boolean tempMatch(ItemStack recipeIS, ItemStack inputIS) {
+        NBTTagCompound rnbt = recipeIS.getTagCompound();
+        NBTTagCompound inbt = inputIS.getTagCompound();
 
-		if(rnbt != null && TFC_ItemHeat.hasTemp(recipeIS))
-		{
-			if(inbt != null && TFC_ItemHeat.hasTemp(inputIS))
-			{
-				return HeatRegistry.getInstance().getIsLiquid(inputIS);//Recipe expects a hot item and the input is liquid
-			}
-			else
-			{
-				return false;//Recipe expects a cold item and the input is not cold
-			}
-		}
-		return true;
-	}
+        if (rnbt != null && rnbt.hasKey("noTemp")) {
+            // Recipe expects a cold item and either the input has not tag at all or at the least is missing a
+            // temperature tag
+            return inbt == null || !TFC_ItemHeat.hasTemp(inputIS);
+        }
 
-//	private boolean NBTMatches(ItemStack recipeIS, ItemStack inputIS)
-//	{
-//		NBTTagCompound nbt = recipeIS.getTagCompound();
-//		NBTTagCompound inbt = inputIS.getTagCompound();
-//		Iterator i = nbt.getTags().iterator();
-//
-//		if(inbt == null)
-//			return false;
-//
-//		while(i.hasNext())
-//		{
-//			NBTBase tag = (NBTBase)i.next();
-//			if(inbt.hasKey(tag.getName()))
-//				if(!inbt.getTag(tag.getName()).equals(tag))
-//					return false;
-//		}
-//		return true;
-//	}
+        if (rnbt != null && TFC_ItemHeat.hasTemp(recipeIS)) {
+            if (inbt != null && TFC_ItemHeat.hasTemp(inputIS)) {
+                return HeatRegistry.getInstance()
+                    .getIsLiquid(inputIS);// Recipe expects a hot item and the input is liquid
+            } else {
+                return false;// Recipe expects a cold item and the input is not cold
+            }
+        }
+        return true;
+    }
+
+    // private boolean NBTMatches(ItemStack recipeIS, ItemStack inputIS)
+    // {
+    // NBTTagCompound nbt = recipeIS.getTagCompound();
+    // NBTTagCompound inbt = inputIS.getTagCompound();
+    // Iterator i = nbt.getTags().iterator();
+    //
+    // if(inbt == null)
+    // return false;
+    //
+    // while(i.hasNext())
+    // {
+    // NBTBase tag = (NBTBase)i.next();
+    // if(inbt.hasKey(tag.getName()))
+    // if(!inbt.getTag(tag.getName()).equals(tag))
+    // return false;
+    // }
+    // return true;
+    // }
 }

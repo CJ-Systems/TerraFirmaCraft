@@ -9,43 +9,37 @@ import net.minecraft.tileentity.TileEntity;
 
 import com.google.common.primitives.SignedBytes;
 
-public class TESRBase extends TileEntitySpecialRenderer
-{
-	protected static RenderBlocks renderBlocks = new RenderBlocks();
-	protected static RenderItem itemRenderer;
+public class TESRBase extends TileEntitySpecialRenderer {
 
-	{
-		itemRenderer = new RenderItem()
-		{
-			@Override
-			public byte getMiniBlockCount(ItemStack stack, byte original)
-			{
-				return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 15) + 1);
-			}
+    protected static RenderBlocks renderBlocks = new RenderBlocks();
+    protected static RenderItem itemRenderer;
 
-			@Override
-			public byte getMiniItemCount(ItemStack stack, byte original)
-			{
-				return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 7) + 1);
-			}
+    {
+        itemRenderer = new RenderItem() {
 
-			@Override
-			public boolean shouldBob()
-			{
-				return true;
-			}
+            @Override
+            public byte getMiniBlockCount(ItemStack stack, byte original) {
+                return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 15) + 1);
+            }
 
-			@Override
-			public boolean shouldSpreadItems()
-			{
-				return false;
-			}
-		};
-		itemRenderer.setRenderManager(RenderManager.instance);
-	}
+            @Override
+            public byte getMiniItemCount(ItemStack stack, byte original) {
+                return SignedBytes.saturatedCast(Math.min(stack.stackSize / 32, 7) + 1);
+            }
 
-	@Override
-	public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f)
-	{
-	}
+            @Override
+            public boolean shouldBob() {
+                return true;
+            }
+
+            @Override
+            public boolean shouldSpreadItems() {
+                return false;
+            }
+        };
+        itemRenderer.setRenderManager(RenderManager.instance);
+    }
+
+    @Override
+    public void renderTileEntityAt(TileEntity tileentity, double d0, double d1, double d2, float f) {}
 }

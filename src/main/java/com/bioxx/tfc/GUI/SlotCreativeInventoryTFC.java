@@ -10,110 +10,98 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-class SlotCreativeInventoryTFC extends Slot
-{
-	private final Slot theSlot;
+class SlotCreativeInventoryTFC extends Slot {
 
-	//private final GuiContainerCreativeTFC theCreativeInventory;
+    private final Slot theSlot;
 
-	public SlotCreativeInventoryTFC(GuiContainerCreativeTFC par1GuiContainerCreative, Slot par2Slot, int par3)
-	{
-		super(par2Slot.inventory, par3, 0, 0);
-		//this.theCreativeInventory = par1GuiContainerCreative;
-		this.theSlot = par2Slot;
-	}
+    // private final GuiContainerCreativeTFC theCreativeInventory;
 
-	@Override
-	public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack)
-	{
-		this.theSlot.onPickupFromSlot(par1EntityPlayer, par2ItemStack);
-	}
+    public SlotCreativeInventoryTFC(GuiContainerCreativeTFC par1GuiContainerCreative, Slot par2Slot, int par3) {
+        super(par2Slot.inventory, par3, 0, 0);
+        // this.theCreativeInventory = par1GuiContainerCreative;
+        this.theSlot = par2Slot;
+    }
 
-	/**
-	 * Check if the stack is a valid item for this slot. Always true beside for the armor slots.
-	 */
-	@Override
-	public boolean isItemValid(ItemStack par1ItemStack)
-	{
-		return this.theSlot.isItemValid(par1ItemStack);
-	}
+    @Override
+    public void onPickupFromSlot(EntityPlayer par1EntityPlayer, ItemStack par2ItemStack) {
+        this.theSlot.onPickupFromSlot(par1EntityPlayer, par2ItemStack);
+    }
 
-	/**
-	 * Helper fnct to get the stack in the slot.
-	 */
-	@Override
-	public ItemStack getStack()
-	{
-		return this.theSlot.getStack();
-	}
+    /**
+     * Check if the stack is a valid item for this slot. Always true beside for the armor slots.
+     */
+    @Override
+    public boolean isItemValid(ItemStack par1ItemStack) {
+        return this.theSlot.isItemValid(par1ItemStack);
+    }
 
-	/**
-	 * Returns if this slot contains a stack.
-	 */
-	@Override
-	public boolean getHasStack()
-	{
-		return this.theSlot.getHasStack();
-	}
+    /**
+     * Helper fnct to get the stack in the slot.
+     */
+    @Override
+    public ItemStack getStack() {
+        return this.theSlot.getStack();
+    }
 
-	/**
-	 * Helper method to put a stack in the slot.
-	 */
-	@Override
-	public void putStack(ItemStack par1ItemStack)
-	{
-		this.theSlot.putStack(par1ItemStack);
-	}
+    /**
+     * Returns if this slot contains a stack.
+     */
+    @Override
+    public boolean getHasStack() {
+        return this.theSlot.getHasStack();
+    }
 
-	/**
-	 * Called when the stack in a Slot changes
-	 */
-	@Override
-	public void onSlotChanged()
-	{
-		this.theSlot.onSlotChanged();
-	}
+    /**
+     * Helper method to put a stack in the slot.
+     */
+    @Override
+    public void putStack(ItemStack par1ItemStack) {
+        this.theSlot.putStack(par1ItemStack);
+    }
 
-	/**
-	 * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
-	 * of armor slots)
-	 */
-	@Override
-	public int getSlotStackLimit()
-	{
-		return this.theSlot.getSlotStackLimit();
-	}
+    /**
+     * Called when the stack in a Slot changes
+     */
+    @Override
+    public void onSlotChanged() {
+        this.theSlot.onSlotChanged();
+    }
 
-	/**
-	 * Returns the icon index on items.png that is used as background image of the slot.
-	 */
-	@Override
-	public IIcon getBackgroundIconIndex()
-	{
-		return this.theSlot.getBackgroundIconIndex();
-	}
+    /**
+     * Returns the maximum stack size for a given slot (usually the same as getInventoryStackLimit(), but 1 in the case
+     * of armor slots)
+     */
+    @Override
+    public int getSlotStackLimit() {
+        return this.theSlot.getSlotStackLimit();
+    }
 
-	/**
-	 * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg. Returns the new
-	 * stack.
-	 */
-	@Override
-	public ItemStack decrStackSize(int par1)
-	{
-		return this.theSlot.decrStackSize(par1);
-	}
+    /**
+     * Returns the icon index on items.png that is used as background image of the slot.
+     */
+    @Override
+    public IIcon getBackgroundIconIndex() {
+        return this.theSlot.getBackgroundIconIndex();
+    }
 
-	/**
-	 * returns true if this slot is in par2 of par1
-	 */
-	@Override
-	public boolean isSlotInInventory(IInventory par1IInventory, int par2)
-	{
-		return this.theSlot.isSlotInInventory(par1IInventory, par2);
-	}
+    /**
+     * Decrease the size of the stack in slot (first int arg) by the amount of the second int arg. Returns the new
+     * stack.
+     */
+    @Override
+    public ItemStack decrStackSize(int par1) {
+        return this.theSlot.decrStackSize(par1);
+    }
 
-	public static Slot getSlot(SlotCreativeInventoryTFC par0SlotCreativeInventory)
-	{
-		return par0SlotCreativeInventory.theSlot;
-	}
+    /**
+     * returns true if this slot is in par2 of par1
+     */
+    @Override
+    public boolean isHere(IInventory par1IInventory, int par2) {
+        return this.theSlot.isHere(par1IInventory, par2);
+    }
+
+    public static Slot getSlot(SlotCreativeInventoryTFC par0SlotCreativeInventory) {
+        return par0SlotCreativeInventory.theSlot;
+    }
 }

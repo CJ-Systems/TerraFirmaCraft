@@ -11,96 +11,80 @@ import com.bioxx.tfc.Containers.Slots.SlotLogPile;
 import com.bioxx.tfc.Core.Player.PlayerInventory;
 import com.bioxx.tfc.TileEntities.TELogPile;
 
-public class ContainerLogPile extends ContainerTFC
-{
-	private World world;
-	//private int posX;
-	//private int posY;
-	//private int posZ;
-	private TELogPile logpile;
-	private EntityPlayer player;
+public class ContainerLogPile extends ContainerTFC {
 
-	public ContainerLogPile(InventoryPlayer playerinv, TELogPile pile, World world, int x, int y, int z)
-	{
-		this.player = playerinv.player;
-		this.logpile = pile;
-		this.world = world;
-		//this.posX = x;
-		//this.posY = y;
-		//this.posZ = z;
-		pile.openInventory();
-		layoutContainer(playerinv, pile, 0, 0);
-		PlayerInventory.buildInventoryLayout(this, playerinv, 8, 90, false, true);
-	}
+    private World world;
+    // private int posX;
+    // private int posY;
+    // private int posZ;
+    private TELogPile logpile;
+    private EntityPlayer player;
 
-	/**
-	 * Callback for when the crafting gui is closed.
-	 */
-	@Override
-	public void onContainerClosed(EntityPlayer par1EntityPlayer)
-	{
-		super.onContainerClosed(par1EntityPlayer);
+    public ContainerLogPile(InventoryPlayer playerinv, TELogPile pile, World world, int x, int y, int z) {
+        this.player = playerinv.player;
+        this.logpile = pile;
+        this.world = world;
+        // this.posX = x;
+        // this.posY = y;
+        // this.posZ = z;
+        pile.openChest();
+        layoutContainer(playerinv, pile, 0, 0);
+        PlayerInventory.buildInventoryLayout(this, playerinv, 8, 90, false, true);
+    }
 
-		if(!world.isRemote)
-			logpile.closeInventory();
-	}
+    /**
+     * Callback for when the crafting gui is closed.
+     */
+    @Override
+    public void onContainerClosed(EntityPlayer par1EntityPlayer) {
+        super.onContainerClosed(par1EntityPlayer);
 
-	/**
-	 * Called to transfer a stack from one inventory to the other eg. when shift clicking.
-	 */
-	@Override
-	public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum)
-	{
-		ItemStack origStack = null;
-		Slot slot = (Slot)this.inventorySlots.get(slotNum);
+        if (!world.isRemote) logpile.closeChest();
+    }
 
-		if (slot != null && slot.getHasStack())
-		{
-			ItemStack slotStack = slot.getStack();
-			origStack = slotStack.copy();
+    /**
+     * Called to transfer a stack from one inventory to the other eg. when shift clicking.
+     */
+    @Override
+    public ItemStack transferStackInSlotTFC(EntityPlayer player, int slotNum) {
+        ItemStack origStack = null;
+        Slot slot = (Slot) this.inventorySlots.get(slotNum);
 
-			// From pile to inventory
-			if (slotNum < 4)
-			{
-				if (!this.mergeItemStack(slotStack, 4, inventorySlots.size(), true))
-					return null;
-			}
-			else
-			{
-				if (!this.mergeItemStack(slotStack, 0, 4, false))
-					return null;
-			}
+        if (slot != null && slot.getHasStack()) {
+            ItemStack slotStack = slot.getStack();
+            origStack = slotStack.copy();
 
-			if (slotStack.stackSize <= 0)
-				slot.putStack(null);
-			else
-				slot.onSlotChanged();
+            // From pile to inventory
+            if (slotNum < 4) {
+                if (!this.mergeItemStack(slotStack, 4, inventorySlots.size(), true)) return null;
+            } else {
+                if (!this.mergeItemStack(slotStack, 0, 4, false)) return null;
+            }
 
-			if (slotStack.stackSize == origStack.stackSize)
-				return null;
+            if (slotStack.stackSize <= 0) slot.putStack(null);
+            else slot.onSlotChanged();
 
-			slot.onPickupFromSlot(player, slotStack);
-		}
+            if (slotStack.stackSize == origStack.stackSize) return null;
 
-		return origStack;
-	}
+            slot.onPickupFromSlot(player, slotStack);
+        }
 
-	@Override
-	public boolean canInteractWith(EntityPlayer var1)
-	{
-		return true;
-	}
+        return origStack;
+    }
 
-	protected void layoutContainer(IInventory playerInventory, IInventory chestInventory, int xSize, int ySize)
-	{
-		this.addSlotToContainer(new SlotLogPile(getPlayer(),chestInventory, 0, 71, 25));
-		this.addSlotToContainer(new SlotLogPile(getPlayer(),chestInventory, 1, 89, 25));
-		this.addSlotToContainer(new SlotLogPile(getPlayer(),chestInventory, 2, 71, 43));
-		this.addSlotToContainer(new SlotLogPile(getPlayer(),chestInventory, 3, 89, 43));
-	}
-	
-	public EntityPlayer getPlayer()
-	{
-		return player;
-	}
+    @Override
+    public boolean canInteractWith(EntityPlayer var1) {
+        return true;
+    }
+
+    protected void layoutContainer(IInventory playerInventory, IInventory chestInventory, int xSize, int ySize) {
+        this.addSlotToContainer(new SlotLogPile(getPlayer(), chestInventory, 0, 71, 25));
+        this.addSlotToContainer(new SlotLogPile(getPlayer(), chestInventory, 1, 89, 25));
+        this.addSlotToContainer(new SlotLogPile(getPlayer(), chestInventory, 2, 71, 43));
+        this.addSlotToContainer(new SlotLogPile(getPlayer(), chestInventory, 3, 89, 43));
+    }
+
+    public EntityPlayer getPlayer() {
+        return player;
+    }
 }

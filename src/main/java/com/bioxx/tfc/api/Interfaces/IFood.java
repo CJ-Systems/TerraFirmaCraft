@@ -5,41 +5,43 @@ import net.minecraft.world.World;
 
 import com.bioxx.tfc.api.Enums.EnumFoodGroup;
 
-public interface IFood
-{
-	EnumFoodGroup getFoodGroup();
+public interface IFood {
 
-	int getFoodID();
+    EnumFoodGroup getFoodGroup();
 
-	float getDecayRate(ItemStack is);
+    int getFoodID();
 
-	float getFoodMaxWeight(ItemStack is);
+    float getDecayRate(ItemStack is);
 
-	/**
-	 * @return Returns an ItemStack that will replace the current ItemStack when the food has reached maximum decay.
-	 * Normally returns null.
-	 */
-	ItemStack onDecayed(ItemStack is, World world, int i, int j, int k);
-	/**
-	 * @return Is this food edible as is.
-	 */
-	boolean isEdible(ItemStack is);
-	/**
-	 * @return Is this item usable in meals
-	 */
-	boolean isUsable(ItemStack is);
+    float getFoodMaxWeight(ItemStack is);
 
-	int getTasteSweet(ItemStack is);
+    /**
+     * @return Returns an ItemStack that will replace the current ItemStack when the food has reached maximum decay.
+     *         Normally returns null.
+     */
+    ItemStack onDecayed(ItemStack is, World world, int i, int j, int k);
 
-	int getTasteSour(ItemStack is);
+    /**
+     * @return Is this food edible as is.
+     */
+    boolean isEdible(ItemStack is);
 
-	int getTasteSalty(ItemStack is);
+    /**
+     * @return Is this item usable in meals
+     */
+    boolean isUsable(ItemStack is);
 
-	int getTasteBitter(ItemStack is);
+    int getTasteSweet(ItemStack is);
 
-	int getTasteSavory(ItemStack is);
+    int getTasteSour(ItemStack is);
 
-	boolean renderDecay();
+    int getTasteSalty(ItemStack is);
 
-	boolean renderWeight();
+    int getTasteBitter(ItemStack is);
+
+    int getTasteSavory(ItemStack is);
+
+    boolean renderDecay();
+
+    boolean renderWeight();
 }

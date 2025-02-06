@@ -8,38 +8,34 @@ import com.bioxx.tfc.api.Enums.EnumSize;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 
-public class ItemSpindle extends ItemTerra
-{
-	public ItemSpindle()
-	{
-		super();
-		this.setMaxDamage(40);
-		this.setFolder("tools/");
-		setNoRepair();
+public class ItemSpindle extends ItemTerra {
 
-		this.setSize(EnumSize.VERYSMALL);
-	}
+    public ItemSpindle() {
+        super();
+        this.setMaxDurability(40);
+        this.setFolder("tools/");
+        setNoRepair();
 
-	@Override
-	public Multimap getItemAttributeModifiers()
-	{
-		return HashMultimap.create();
-	}
-	
-	@Override
-	public EnumItemReach getReach(ItemStack is){
-		return EnumItemReach.SHORT;
-	}
+        this.setSize(EnumSize.VERYSMALL);
+    }
 
-	@Override
-	public int getItemStackLimit()
-	{
-		return 1;
-	}
+    @Override
+    public Multimap getItemAttributeModifiers() {
+        return HashMultimap.create();
+    }
 
-	@Override
-	public boolean canStack()
-	{
-		return false;
-	}
+    @Override
+    public EnumItemReach getReach(ItemStack is) {
+        return EnumItemReach.SHORT;
+    }
+
+    @Override
+    public int getItemStackLimit() {
+        return 1;
+    }
+
+    @Override
+    public boolean canStack() {
+        return false;
+    }
 }

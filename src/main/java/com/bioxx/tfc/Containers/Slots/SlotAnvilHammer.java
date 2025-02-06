@@ -7,16 +7,14 @@ import net.minecraft.item.ItemStack;
 
 import com.bioxx.tfc.Items.Tools.ItemHammer;
 
-public class SlotAnvilHammer extends Slot
-{
-	public SlotAnvilHammer(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k)
-	{
-		super(iinventory, i, j, k);
-	}
+public class SlotAnvilHammer extends Slot {
 
-	@Override
-	public boolean isItemValid(ItemStack itemstack)
-	{
-		return itemstack.getItem() instanceof ItemHammer;
-	}
+    public SlotAnvilHammer(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k) {
+        super(iinventory, i, j, k);
+    }
+
+    @Override
+    public boolean isItemValid(ItemStack itemstack) {
+        return itemstack.getItem() instanceof ItemHammer;
+    }
 }

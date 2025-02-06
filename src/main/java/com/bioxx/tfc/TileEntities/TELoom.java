@@ -13,494 +13,462 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
 import com.bioxx.tfc.Reference;
 import com.bioxx.tfc.Render.Models.ModelLoom;
-import com.bioxx.tfc.api.TFCItems;
 import com.bioxx.tfc.api.Constant.Global;
 import com.bioxx.tfc.api.Crafting.LoomManager;
 import com.bioxx.tfc.api.Crafting.LoomRecipe;
+import com.bioxx.tfc.api.TFCItems;
 
-public class TELoom extends NetworkTileEntity implements IInventory
-{
-	public byte rotation;
-	public int loomType;
-	private ItemStack[] storage;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-	//private int numStrings;
-	private boolean weaving;
-	private boolean finished;
+public class TELoom extends NetworkTileEntity implements IInventory {
 
-	private ModelLoom model;
+    public byte rotation;
+    public int loomType;
+    private ItemStack[] storage;
 
-	private int clothCompletionCount;
+    // private int numStrings;
+    private boolean weaving;
+    private boolean finished;
 
-	public LoomRecipe recipe;
-	private final ResourceLocation defaultTexture = new ResourceLocation(Reference.MOD_ID, "textures/blocks/String.png");
+    private ModelLoom model;
 
-	@Override
-	public boolean canUpdate()
-	{
-		return false;
-	}
-	
-	public TELoom()
-	{
-		storage = new ItemStack[2];
-	}
+    private int clothCompletionCount;
 
-	@Override
-	public void closeInventory()
-	{
+    public LoomRecipe recipe;
+    private final ResourceLocation defaultTexture = new ResourceLocation(
+        Reference.MOD_ID,
+        "textures/blocks/String.png");
 
-	}
+    @Override
+    public boolean canUpdate() {
+        return false;
+    }
 
-	@Override
-	@SideOnly(Side.CLIENT)
-	public AxisAlignedBB getRenderBoundingBox()
-	{
-		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
-	}
+    public TELoom() {
+        storage = new ItemStack[2];
+    }
 
-	@Override
-	public ItemStack decrStackSize(int i, int j)
-	{
-		if(storage[i] != null)
-		{
-			if (storage[i].stackSize <= j)
-			{
-				ItemStack is = storage[i];
-				storage[i] = null;
-				return is;
-			}
-			ItemStack isSplit = storage[i].splitStack(j);
-			if(storage[i].stackSize == 0)
-				storage[i] = null;
-			return isSplit;
-		}
-		else
-		{
-			return null;
-		}
-	}
+    @Override
+    public void closeChest() {
 
-	public boolean isFinished(){
-		return finished;
-	}
+    }
 
-	public ItemStack addString(ItemStack i){
-		if(!isFinished() &&  i != null && !this.worldObj.isRemote){
-			recipe = LoomManager.getInstance().findPotentialRecipes(storage[0]);
-			if (storage[0] != null)
-			{
-				LoomRecipe lr = LoomManager.getInstance().findPotentialRecipes(i);
-				if(lr != null && lr.equals(recipe))
-				{
-					if(this.getStringCount() < recipe.getReqSize())
-					{
-						i.stackSize--;
-						this.storage[0].stackSize++;
-						updateLoom();
-					}
-				}
-			}
-			else if(LoomManager.getInstance().hasPotentialRecipes(i)){
-				i.stackSize--;
-				ItemStack is = i.copy();
-				is.stackSize = 1;
-				this.setInventorySlotContents(0, is);
-			}
-		}
-		return i;
-	}
+    @Override
+    @SideOnly(Side.CLIENT)
+    public AxisAlignedBB getRenderBoundingBox() {
+        return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord + 1, yCoord + 1, zCoord + 1);
+    }
 
-	public ItemStack takeFinishedCloth(){
-		if (finished)
-		{
-			this.finished = false;
-			this.clothCompletionCount = 0;
-			ItemStack is = storage[1].copy();
-			storage[1] = null;
-			updateLoom();
-			return is;
-		}
-		return null;
-	}
+    @Override
+    public ItemStack decrStackSize(int i, int j) {
+        if (storage[i] != null) {
+            if (storage[i].stackSize <= j) {
+                ItemStack is = storage[i];
+                storage[i] = null;
+                return is;
+            }
+            ItemStack isSplit = storage[i].splitStack(j);
+            if (storage[i].stackSize == 0) storage[i] = null;
+            return isSplit;
+        } else {
+            return null;
+        }
+    }
 
-	public void ejectContents()
-	{
-		float f3 = 0.05F;
-		EntityItem entityitem;
-		Random rand = new Random();
-		float f = rand.nextFloat() * 0.3F + 0.1F;
-		float f1 = rand.nextFloat() * 2.0F + 0.4F;
-		float f2 = rand.nextFloat() * 0.3F + 0.1F;
+    public boolean isFinished() {
+        return finished;
+    }
 
-		for (int i = 0; i < getSizeInventory(); i++)
-		{
-			if(storage[i] != null)
-			{
-				entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1, zCoord + f2, storage[i]);
-				entityitem.motionX = (float)rand.nextGaussian() * f3;
-				entityitem.motionY = (float)rand.nextGaussian() * f3 + 0.2F;
-				entityitem.motionZ = (float)rand.nextGaussian() * f3;
-				worldObj.spawnEntityInWorld(entityitem);
-			}
-		}
-	}
+    public ItemStack addString(ItemStack i) {
+        if (!isFinished() && i != null && !this.worldObj.isRemote) {
+            recipe = LoomManager.getInstance()
+                .findPotentialRecipes(storage[0]);
+            if (storage[0] != null) {
+                LoomRecipe lr = LoomManager.getInstance()
+                    .findPotentialRecipes(i);
+                if (lr != null && lr.equals(recipe)) {
+                    if (this.getStringCount() < recipe.getReqSize()) {
+                        i.stackSize--;
+                        this.storage[0].stackSize++;
+                        updateLoom();
+                    }
+                }
+            } else if (LoomManager.getInstance()
+                .hasPotentialRecipes(i)) {
+                    i.stackSize--;
+                    ItemStack is = i.copy();
+                    is.stackSize = 1;
+                    this.setInventorySlotContents(0, is);
+                }
+        }
+        return i;
+    }
 
-	@Override
-	public int getInventoryStackLimit()
-	{
-		return this.getRequiredStringCount();
-	}
+    public ItemStack takeFinishedCloth() {
+        if (finished) {
+            this.finished = false;
+            this.clothCompletionCount = 0;
+            ItemStack is = storage[1].copy();
+            storage[1] = null;
+            updateLoom();
+            return is;
+        }
+        return null;
+    }
 
-	@Override
-	public String getInventoryName()
-	{
-		return "Loom";
-	}
+    public void ejectContents() {
+        float f3 = 0.05F;
+        EntityItem entityitem;
+        Random rand = new Random();
+        float f = rand.nextFloat() * 0.3F + 0.1F;
+        float f1 = rand.nextFloat() * 2.0F + 0.4F;
+        float f2 = rand.nextFloat() * 0.3F + 0.1F;
 
-	public ModelLoom getModel(){
-		if(worldObj.isRemote){
-			return model;
-		}
-		return null;
-	}
+        for (int i = 0; i < getSizeInventory(); i++) {
+            if (storage[i] != null) {
+                entityitem = new EntityItem(worldObj, xCoord + f, yCoord + f1, zCoord + f2, storage[i]);
+                entityitem.motionX = (float) rand.nextGaussian() * f3;
+                entityitem.motionY = (float) rand.nextGaussian() * f3 + 0.2F;
+                entityitem.motionZ = (float) rand.nextGaussian() * f3;
+                worldObj.spawnEntityInWorld(entityitem);
+            }
+        }
+    }
 
-	public void setModel(ModelLoom loomModel){
-		if(worldObj.isRemote){
-			model = loomModel;
-			model.cloth = this.clothCompletionCount;
-		}
-	}
+    @Override
+    public int getInventoryStackLimit() {
+        return this.getRequiredStringCount();
+    }
 
-	@Override
-	public int getSizeInventory()
-	{
-		return 2;
-	}
+    @Override
+    public String getInventoryName() {
+        return "Loom";
+    }
 
-	public ResourceLocation getWoodResource(){
-		return new ResourceLocation(Reference.MOD_ID, "textures/blocks/wood/WoodSheet/"+Global.WOOD_ALL[loomType]+".png");
-	}
+    public ModelLoom getModel() {
+        if (worldObj.isRemote) {
+            return model;
+        }
+        return null;
+    }
 
-	public ResourceLocation getStringResource(){
-		LoomRecipe resource = null;
+    public void setModel(ModelLoom loomModel) {
+        if (worldObj.isRemote) {
+            model = loomModel;
+            model.cloth = this.clothCompletionCount;
+        }
+    }
 
-		if (storage[1] != null)
-			resource = LoomManager.getInstance().findMatchingResult(storage[1]);
-		else
-			resource = LoomManager.getInstance().findPotentialRecipes(storage[0]);
+    @Override
+    public int getSizeInventory() {
+        return 2;
+    }
 
-		ResourceLocation rl = LoomManager.getInstance().findMatchingTexture(resource);
-		return resource != null && rl != null ? rl : this.defaultTexture;
-	}
+    public ResourceLocation getWoodResource() {
+        return new ResourceLocation(
+            Reference.MOD_ID,
+            "textures/blocks/wood/WoodSheet/" + Global.WOOD_ALL[loomType] + ".png");
+    }
 
-	public Item getStringType(){
-		return this.storage[0] != null? this.storage[0].getItem(): null ;
-	}
+    public ResourceLocation getStringResource() {
+        LoomRecipe resource = null;
 
-	public int getStringCount(){
-		return this.storage[0] != null? this.storage[0].stackSize: 0;
-	}
+        if (storage[1] != null) resource = LoomManager.getInstance()
+            .findMatchingResult(storage[1]);
+        else resource = LoomManager.getInstance()
+            .findPotentialRecipes(storage[0]);
 
-	public void setString(ItemStack is){
-		this.storage[0] = is;
-		if(!worldObj.isRemote){
-			this.updateLoom();
-		}
-	}
+        ResourceLocation rl = LoomManager.getInstance()
+            .findMatchingTexture(resource);
+        return resource != null && rl != null ? rl : this.defaultTexture;
+    }
 
-	public void setStringCount(int count){
-		if(this.storage[0] != null)this.storage[0].stackSize = count;
-		if(!worldObj.isRemote){
-			this.updateLoom();
-		}
-	}
+    public Item getStringType() {
+        return this.storage[0] != null ? this.storage[0].getItem() : null;
+    }
 
-	@Override
-	public ItemStack getStackInSlot(int i)
-	{
-		return storage[i];
-	}
+    public int getStringCount() {
+        return this.storage[0] != null ? this.storage[0].stackSize : 0;
+    }
 
-	@Override
-	public ItemStack getStackInSlotOnClosing(int i)
-	{
-		return storage[i];
-	}
+    public void setString(ItemStack is) {
+        this.storage[0] = is;
+        if (!worldObj.isRemote) {
+            this.updateLoom();
+        }
+    }
 
-	public int getInvCount()
-	{
-		int count = 0;
-		for(ItemStack is : storage)
-		{
-			if(is != null)
-				count++;
-		}
-		if(storage[0] != null && count == 1)
-			return 0;
-		return count;
-	}
+    public void setStringCount(int count) {
+        if (this.storage[0] != null) this.storage[0].stackSize = count;
+        if (!worldObj.isRemote) {
+            this.updateLoom();
+        }
+    }
 
-	public boolean canWeave(){
-		recipe = LoomManager.getInstance().findMatchingRecipe(storage[0]);
-		return recipe != null && !finished;
-	}
+    @Override
+    public ItemStack getStackInSlot(int i) {
+        return storage[i];
+    }
 
-	public void setIsWeaving(boolean isWeaving){
-		if(canWeave()){
-			this.weaving = isWeaving;
-			if(!worldObj.isRemote){
-				this.updateLoom();
-			}
-		}
-	}
+    @Override
+    public ItemStack getStackInSlotOnClosing(int i) {
+        return storage[i];
+    }
 
-	public boolean getIsWeaving(){
-		return this.weaving;
-	}
+    public int getInvCount() {
+        int count = 0;
+        for (ItemStack is : storage) {
+            if (is != null) count++;
+        }
+        if (storage[0] != null && count == 1) return 0;
+        return count;
+    }
 
+    public boolean canWeave() {
+        recipe = LoomManager.getInstance()
+            .findMatchingRecipe(storage[0]);
+        return recipe != null && !finished;
+    }
 
-	@Override
-	public boolean isUseableByPlayer(EntityPlayer entityplayer)
-	{
-		return false;
-	}
+    public void setIsWeaving(boolean isWeaving) {
+        if (canWeave()) {
+            this.weaving = isWeaving;
+            if (!worldObj.isRemote) {
+                this.updateLoom();
+            }
+        }
+    }
 
-	@Override
-	public void openInventory()
-	{
-	}
+    public boolean getIsWeaving() {
+        return this.weaving;
+    }
 
-	@Override
-	public void setInventorySlotContents(int i, ItemStack is)
-	{
-		storage[i] = is;
-	}
+    @Override
+    public boolean isUseableByPlayer(EntityPlayer entityplayer) {
+        return false;
+    }
 
-	public ItemStack getInputStack()
-	{
-		return storage[0];
-	}
+    @Override
+    public void openChest() {}
 
-	@Override
-	public boolean hasCustomInventoryName()
-	{
-		return false;
-	}
+    @Override
+    public void setInventorySlotContents(int i, ItemStack is) {
+        storage[i] = is;
+    }
 
-	@Override
-	public boolean isItemValidForSlot(int i, ItemStack itemstack)
-	{
-		return false;
-	}
+    public ItemStack getInputStack() {
+        return storage[0];
+    }
 
-	public int getRequiredStringCount(){
-		if (storage[0] != null)
-		{
-			recipe = LoomManager.getInstance().findPotentialRecipes(storage[0]);
-			if(recipe != null){
-				return recipe.getReqSize();
-			}
-		}
-		else if (storage[1] != null)
-		{
-			recipe = LoomManager.getInstance().findMatchingResult(storage[1]);
-			if (recipe != null)
-			{
-				return recipe.getReqSize();
-			}
-		}
-		return 16;
-	}
+    @Override
+    public boolean isCustomInventoryName() {
+        return false;
+    }
 
-	public void finishCloth(){
-		if(!this.finished){
-			NBTTagCompound nbt = new NBTTagCompound();
-			this.weaving = false;
-			this.finished = true;
-			//nbt.setBoolean("weaving", this.weaving);
-			//nbt.setBoolean("finished", this.finished);
-			recipe = LoomManager.getInstance().findMatchingRecipe(storage[0]);
-			this.storage[1] = recipe.getResult(storage[0]);
-			this.setString(null);
-			this.writeToNBT(nbt);
-			this.broadcastPacketInRange(this.createDataPacket(nbt));
-		}
-	}
+    @Override
+    public boolean isItemValidForSlot(int i, ItemStack itemstack) {
+        return false;
+    }
 
-	public void dropItem(){
-		if(!worldObj.isRemote){
-			this.ejectContents();
-		}
-	}
+    public int getRequiredStringCount() {
+        if (storage[0] != null) {
+            recipe = LoomManager.getInstance()
+                .findPotentialRecipes(storage[0]);
+            if (recipe != null) {
+                return recipe.getReqSize();
+            }
+        } else if (storage[1] != null) {
+            recipe = LoomManager.getInstance()
+                .findMatchingResult(storage[1]);
+            if (recipe != null) {
+                return recipe.getReqSize();
+            }
+        }
+        return 16;
+    }
 
-	public void finishWeaveCycle(){
-		NBTTagCompound nbt = new NBTTagCompound();
-		this.weaving = false;
-		this.clothCompletionCount++;
-		//nbt.setBoolean("weaving", false);
-		//nbt.setInteger("cloth", this.cloth);
-		this.writeToNBT(nbt);
-		this.broadcastPacketInRange(this.createDataPacket(nbt));
-	}
+    public void finishCloth() {
+        if (!this.finished) {
+            NBTTagCompound nbt = new NBTTagCompound();
+            this.weaving = false;
+            this.finished = true;
+            // nbt.setBoolean("weaving", this.weaving);
+            // nbt.setBoolean("finished", this.finished);
+            recipe = LoomManager.getInstance()
+                .findMatchingRecipe(storage[0]);
+            this.storage[1] = recipe.getResult(storage[0]);
+            this.setString(null);
+            this.writeToNBT(nbt);
+            this.broadcastPacketInRange(this.createDataPacket(nbt));
+        }
+    }
 
-	public void updateLoom(){
-		NBTTagCompound nbt = new NBTTagCompound();
-		//nbt.setInteger("stringCount", this.stringCount);
-		//nbt.setBoolean("weaving", weaving);
-		//nbt.setInteger("stringType", stringType);
-		writeToNBT(nbt);
-		this.broadcastPacketInRange(this.createDataPacket(nbt));
-	}
+    public void dropItem() {
+        if (!worldObj.isRemote) {
+            this.ejectContents();
+        }
+    }
 
+    public void finishWeaveCycle() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        this.weaving = false;
+        this.clothCompletionCount++;
+        // nbt.setBoolean("weaving", false);
+        // nbt.setInteger("cloth", this.cloth);
+        this.writeToNBT(nbt);
+        this.broadcastPacketInRange(this.createDataPacket(nbt));
+    }
 
-	public int getCloth(){
-		return clothCompletionCount;
-	}
+    public void updateLoom() {
+        NBTTagCompound nbt = new NBTTagCompound();
+        // nbt.setInteger("stringCount", this.stringCount);
+        // nbt.setBoolean("weaving", weaving);
+        // nbt.setInteger("stringType", stringType);
+        writeToNBT(nbt);
+        this.broadcastPacketInRange(this.createDataPacket(nbt));
+    }
 
-	@Override
-	public void writeToNBT(NBTTagCompound nbt)
-	{
-		super.writeToNBT(nbt);
-		nbt.setInteger("loomType", loomType);
-		nbt.setByte("rotation", rotation);
-		nbt.setBoolean("weaving", weaving);
-		nbt.setBoolean("finished", finished);
-		nbt.setInteger("cloth", clothCompletionCount);
-		NBTTagList nbttaglist = new NBTTagList();
-		for(int i = 0; i < storage.length; i++)
-		{
-			if(storage[i] != null)
-			{
-				NBTTagCompound nbttagcompound1 = new NBTTagCompound();
-				nbttagcompound1.setByte("Slot", (byte)i);
-				storage[i].writeToNBT(nbttagcompound1);
-				nbttaglist.appendTag(nbttagcompound1);
-			}
-		}
-		nbt.setTag("Items", nbttaglist);
-	}
+    public int getCloth() {
+        return clothCompletionCount;
+    }
 
-	@Override
-	public void readFromNBT(NBTTagCompound nbt)
-	{
-		super.readFromNBT(nbt);
-		loomType = nbt.getInteger("loomType");
-		weaving = nbt.getBoolean("weaving");
-		rotation = nbt.getByte("rotation");
-		finished = nbt.getBoolean("finished");
-		clothCompletionCount = nbt.getInteger("cloth");
-		NBTTagList nbttaglist = nbt.getTagList("Items", 10);
-		storage = new ItemStack[getSizeInventory()];
-		for(int i = 0; i < nbttaglist.tagCount(); i++)
-		{
-			NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbttagcompound1.getByte("Slot");
-			if(byte0 >= 0 && byte0 < storage.length)
-				storage[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
-		}
+    @Override
+    public void writeToNBT(NBTTagCompound nbt) {
+        super.writeToNBT(nbt);
+        nbt.setInteger("loomType", loomType);
+        nbt.setByte("rotation", rotation);
+        nbt.setBoolean("weaving", weaving);
+        nbt.setBoolean("finished", finished);
+        nbt.setInteger("cloth", clothCompletionCount);
+        NBTTagList nbttaglist = new NBTTagList();
+        for (int i = 0; i < storage.length; i++) {
+            if (storage[i] != null) {
+                NBTTagCompound nbttagcompound1 = new NBTTagCompound();
+                nbttagcompound1.setByte("Slot", (byte) i);
+                storage[i].writeToNBT(nbttagcompound1);
+                nbttaglist.appendTag(nbttagcompound1);
+            }
+        }
+        nbt.setTag("Items", nbttaglist);
+    }
 
-	}
+    @Override
+    public void readFromNBT(NBTTagCompound nbt) {
+        super.readFromNBT(nbt);
+        loomType = nbt.getInteger("loomType");
+        weaving = nbt.getBoolean("weaving");
+        rotation = nbt.getByte("rotation");
+        finished = nbt.getBoolean("finished");
+        clothCompletionCount = nbt.getInteger("cloth");
+        NBTTagList nbttaglist = nbt.getTagList("Items", 10);
+        storage = new ItemStack[getSizeInventory()];
+        for (int i = 0; i < nbttaglist.tagCount(); i++) {
+            NBTTagCompound nbttagcompound1 = nbttaglist.getCompoundTagAt(i);
+            byte byte0 = nbttagcompound1.getByte("Slot");
+            if (byte0 >= 0 && byte0 < storage.length) storage[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound1);
+        }
 
-	public void readFromItemNBT(NBTTagCompound nbt)
-	{
-		loomType = nbt.getInteger("loomType");
-		/*
-		NBTTagList nbttaglist = nbt.getTagList("Items", 10);
-		for(int i = 0; i < nbttaglist.tagCount(); i++)
-		{
-			NBTTagCompound nbt1 = nbttaglist.getCompoundTagAt(i);
-			byte byte0 = nbt1.getByte("Slot");
-			if(byte0 >= 0 && byte0 < 2)
-				setInventorySlotContents(byte0,ItemStack.loadItemStackFromNBT(nbt1));
-		}
-		 */
-	}
+    }
 
-	public void updateGui()
-	{
-		this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		//validate();
-	}
+    public void readFromItemNBT(NBTTagCompound nbt) {
+        loomType = nbt.getInteger("loomType");
+        /*
+         * NBTTagList nbttaglist = nbt.getTagList("Items", 10);
+         * for(int i = 0; i < nbttaglist.tagCount(); i++)
+         * {
+         * NBTTagCompound nbt1 = nbttaglist.getCompoundTagAt(i);
+         * byte byte0 = nbt1.getByte("Slot");
+         * if(byte0 >= 0 && byte0 < 2)
+         * setInventorySlotContents(byte0,ItemStack.loadItemStackFromNBT(nbt1));
+         * }
+         */
+    }
 
-	@Override
-	public void handleInitPacket(NBTTagCompound nbt) 
-	{
-		this.readFromNBT(nbt);
-		/*
-		this.rotation = nbt.getByte("rotation");
-		this.loomType = nbt.getInteger("loomType");
-		this.stringType = nbt.getInteger("stringType");
-		this.stringCount = nbt.getInteger("stringCount");
-		this.finished = nbt.getBoolean("finished");
-		this.cloth = nbt.getInteger("cloth");
-		this.worldObj.func_147479_m(xCoord, yCoord, zCoord);
-		 */
-	}
+    public void updateGui() {
+        this.worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+        // validate();
+    }
 
+    @Override
+    public void handleInitPacket(NBTTagCompound nbt) {
+        this.readFromNBT(nbt);
+        /*
+         * this.rotation = nbt.getByte("rotation");
+         * this.loomType = nbt.getInteger("loomType");
+         * this.stringType = nbt.getInteger("stringType");
+         * this.stringCount = nbt.getInteger("stringCount");
+         * this.finished = nbt.getBoolean("finished");
+         * this.cloth = nbt.getInteger("cloth");
+         * this.worldObj.func_147479_m(xCoord, yCoord, zCoord);
+         */
+    }
 
-	@Override
-	public void handleDataPacket(NBTTagCompound nbt)
-	{
-		/*
-		if(worldObj.isRemote){
-			if(nbt.hasKey("weaving")){
-				this.setIsWeaving(nbt.getBoolean("weaving"));
-			}
-			if(nbt.hasKey("stringCount")){
-				this.stringCount = nbt.getInteger("stringCount");
-			}
-			if(nbt.hasKey("stringType")){
-				this.stringType = nbt.getInteger("stringType");
-			}
-			if(nbt.hasKey("loomType")){
-				this.loomType = nbt.getInteger("loomType");
-			}
-			if(nbt.hasKey("finished")){
-				this.finished = nbt.getBoolean("finished");
-			}
-			if(nbt.hasKey("cloth")){
-				this.cloth = nbt.getInteger("cloth");
-			}
-		}
-		else{
-			if(nbt.hasKey("weaving")){
-				this.setIsWeaving(nbt.getBoolean("weaving"));
-			}
-			if(nbt.hasKey("finished")){
-				this.finished = nbt.getBoolean("finished");
-			}
-			if(nbt.hasKey("cloth")){
-				this.cloth = nbt.getInteger("cloth");
-			}
-		}
-		 */
-		this.readFromNBT(nbt);
-	}
+    @Override
+    public void handleDataPacket(NBTTagCompound nbt) {
+        /*
+         * if(worldObj.isRemote){
+         * if(nbt.hasKey("weaving")){
+         * this.setIsWeaving(nbt.getBoolean("weaving"));
+         * }
+         * if(nbt.hasKey("stringCount")){
+         * this.stringCount = nbt.getInteger("stringCount");
+         * }
+         * if(nbt.hasKey("stringType")){
+         * this.stringType = nbt.getInteger("stringType");
+         * }
+         * if(nbt.hasKey("loomType")){
+         * this.loomType = nbt.getInteger("loomType");
+         * }
+         * if(nbt.hasKey("finished")){
+         * this.finished = nbt.getBoolean("finished");
+         * }
+         * if(nbt.hasKey("cloth")){
+         * this.cloth = nbt.getInteger("cloth");
+         * }
+         * }
+         * else{
+         * if(nbt.hasKey("weaving")){
+         * this.setIsWeaving(nbt.getBoolean("weaving"));
+         * }
+         * if(nbt.hasKey("finished")){
+         * this.finished = nbt.getBoolean("finished");
+         * }
+         * if(nbt.hasKey("cloth")){
+         * this.cloth = nbt.getInteger("cloth");
+         * }
+         * }
+         */
+        this.readFromNBT(nbt);
+    }
 
-	@Override
-	public void createInitNBT(NBTTagCompound nbt) 
-	{
-		/*
-		nbt.setByte("rotation", rotation);
-		nbt.setInteger("loomType", loomType);
-		nbt.setInteger("stringType", stringType);
-		nbt.setInteger("stringCount", stringCount);
-		nbt.setBoolean("finished",finished);
-		nbt.setInteger("cloth", cloth);*/
-		this.writeToNBT(nbt);
-	}
+    @Override
+    public void createInitNBT(NBTTagCompound nbt) {
+        /*
+         * nbt.setByte("rotation", rotation);
+         * nbt.setInteger("loomType", loomType);
+         * nbt.setInteger("stringType", stringType);
+         * nbt.setInteger("stringCount", stringCount);
+         * nbt.setBoolean("finished",finished);
+         * nbt.setInteger("cloth", cloth);
+         */
+        this.writeToNBT(nbt);
+    }
 
-
-	public static void registerRecipes()
-	{
-		LoomManager.getInstance().addRecipe(new LoomRecipe(new ItemStack(TFCItems.woolYarn,16), new ItemStack(TFCItems.woolCloth,1)),new ResourceLocation(Reference.MOD_ID, "textures/blocks/String.png"));
-		LoomManager.getInstance().addRecipe(new LoomRecipe(new ItemStack(Items.string,24), new ItemStack(TFCItems.silkCloth,1)),new ResourceLocation(Reference.MOD_ID, "textures/blocks/Silk.png"));
-		LoomManager.getInstance().addRecipe(new LoomRecipe(new ItemStack(TFCItems.juteFiber,12), new ItemStack(TFCItems.burlapCloth,1)),new ResourceLocation(Reference.MOD_ID, "textures/blocks/Rope.png"));
-	}
+    public static void registerRecipes() {
+        LoomManager.getInstance()
+            .addRecipe(
+                new LoomRecipe(new ItemStack(TFCItems.woolYarn, 16), new ItemStack(TFCItems.woolCloth, 1)),
+                new ResourceLocation(Reference.MOD_ID, "textures/blocks/String.png"));
+        LoomManager.getInstance()
+            .addRecipe(
+                new LoomRecipe(new ItemStack(Items.string, 24), new ItemStack(TFCItems.silkCloth, 1)),
+                new ResourceLocation(Reference.MOD_ID, "textures/blocks/Silk.png"));
+        LoomManager.getInstance()
+            .addRecipe(
+                new LoomRecipe(new ItemStack(TFCItems.juteFiber, 12), new ItemStack(TFCItems.burlapCloth, 1)),
+                new ResourceLocation(Reference.MOD_ID, "textures/blocks/Rope.png"));
+    }
 }

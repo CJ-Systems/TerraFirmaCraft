@@ -13,67 +13,61 @@ import com.bioxx.tfc.Core.TFCTabs;
 import com.bioxx.tfc.Core.TFC_Core;
 import com.bioxx.tfc.api.TFCItems;
 
-public class ItemCustomPotion extends ItemPotion
-{
-	/** maps potion damage values to lists of effect names */
-	/*private HashMap effectCache = new HashMap();
-	private static final Map field_77835_b = new LinkedHashMap();*/
+public class ItemCustomPotion extends ItemPotion {
 
-	public ItemCustomPotion()
-	{
-		super();
-		this.setCreativeTab(TFCTabs.TFC_FOODS);
-	}
+    /** maps potion damage values to lists of effect names */
+    /*
+     * private HashMap effectCache = new HashMap();
+     * private static final Map field_77835_b = new LinkedHashMap();
+     */
 
-	@Override
-	public ItemStack onEaten(ItemStack is, World world, EntityPlayer player)
-	{
-		if (!player.capabilities.isCreativeMode)
-		{
-			--is.stackSize;
-		}
+    public ItemCustomPotion() {
+        super();
+        this.setCreativeTab(TFCTabs.TFC_FOODS);
+    }
 
-		if (!world.isRemote)
-		{
-			List var4 = this.getEffects(is);
+    @Override
+    public ItemStack onItemUseFinish(ItemStack is, World world, EntityPlayer player) {
+        if (!player.capabilities.isCreativeMode) {
+            --is.stackSize;
+        }
 
-			if (var4 != null)
-			{
-				Iterator var5 = var4.iterator();
+        if (!world.isRemote) {
+            List var4 = this.getEffects(is);
 
-				while (var5.hasNext())
-				{
-					PotionEffect var6 = (PotionEffect)var5.next();
-					player.addPotionEffect(new PotionEffect(var6));
-				}
-			}
-			else
-			{
-				TFC_Core.getPlayerFoodStats(player).restoreWater(player, 12000);
-			}
-		}
+            if (var4 != null) {
+                Iterator var5 = var4.iterator();
 
-		if (!player.capabilities.isCreativeMode)
-		{
-			boolean broken = false;
-			if(world.rand.nextInt(50) == 0)
-			{
-				player.playSound("random.glass", 0.7f, player.worldObj.rand.nextFloat() * 0.2F + 0.8F);
-				broken = true;
-			}
+                while (var5.hasNext()) {
+                    PotionEffect var6 = (PotionEffect) var5.next();
+                    player.addPotionEffect(new PotionEffect(var6));
+                }
+            } else {
+                TFC_Core.getPlayerFoodStats(player)
+                    .restoreWater(player, 12000);
+            }
+        }
 
-			if (!broken && is.stackSize <= 0)
-			{
-				return new ItemStack(TFCItems.glassBottle);
-			}
-		}
+        if (!player.capabilities.isCreativeMode) {
+            boolean broken = false;
+            if (world.rand.nextInt(50) == 0) {
+                player.playSound("random.glass", 0.7f, player.worldObj.rand.nextFloat() * 0.2F + 0.8F);
+                broken = true;
+            }
 
-		return is;
-	}
+            if (!broken && is.stackSize <= 0) {
+                return new ItemStack(TFCItems.glassBottle);
+            }
+        }
 
-	/*@Override
-	public void registerIcons(IIconRegister par1IconRegister)
-	{
-		super.registerIcons(par1IconRegister);
-	}*/
+        return is;
+    }
+
+    /*
+     * @Override
+     * public void registerIcons(IIconRegister par1IconRegister)
+     * {
+     * super.registerIcons(par1IconRegister);
+     * }
+     */
 }

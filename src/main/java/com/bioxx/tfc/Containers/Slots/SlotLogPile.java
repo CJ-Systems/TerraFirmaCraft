@@ -7,22 +7,19 @@ import net.minecraft.item.ItemStack;
 
 import com.bioxx.tfc.api.TFCItems;
 
-public class SlotLogPile extends Slot
-{
-	public SlotLogPile(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k)
-	{
-		super(iinventory, i, j, k);
-	}
+public class SlotLogPile extends Slot {
 
-	@Override
-	public boolean isItemValid(ItemStack itemstack)
-	{
-		return itemstack.getItem() == TFCItems.logs;
-	}
+    public SlotLogPile(EntityPlayer entityplayer, IInventory iinventory, int i, int j, int k) {
+        super(iinventory, i, j, k);
+    }
 
-	@Override
-	public int getSlotStackLimit()
-	{
-		return 4;
-	}
+    @Override
+    public boolean isItemValid(ItemStack itemstack) {
+        return itemstack.getItem() == TFCItems.logs;
+    }
+
+    @Override
+    public int getSlotStackLimit() {
+        return 4;
+    }
 }

@@ -1,0 +1,21 @@
+{
+	"modListVersion": 2,
+	"modList": [{
+		"modid": "${modId}",
+		"name": "${modName}",
+		"description": "Survival Mode as it should have been.",
+		"version": "${modVersion}",
+		"mcversion": "${minecraftVersion}",
+		"url": "https://github.com/CJ-Systems/TerraFirmaCraft",
+		"updateUrl": "https://github.com/CJ-Systems/TerraFirmaCraft/releases",
+		"authorList": ["Bioxx", "Dunkleosteus", "Kittychanley"],
+		"credits": "http://terrafirmacraft.com/credits.html",
+		"logoFile": "/assets/textures/gui/TFCLogo.png",
+		"screenshots": [],
+		"parent": "",
+		"requiredMods": [],
+		"dependencies": ["Forge@[10.13.4.1614]"],
+		"dependants": [],
+		"useDependencyInformation": false
+	}]
+}
